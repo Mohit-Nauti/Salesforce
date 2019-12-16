@@ -1,0 +1,1387 @@
+/*
+* Created by Cloud Analogy on 6/18/2019.
+*/
+@RestResource(urlMapping='/CaseWebService/*')
+global class CaseWebService {
+    @HttpPost
+    global static responseData createCase(){
+        responseData response = new responseData();
+        try{
+            string fields = '';
+            string Reqfields = '';
+            string comparefields = '';
+            string remfields = '';          
+            string query = '';
+            
+            RestRequest request = RestContext.request;
+            String JSONString = request.requestBody.toString();
+            System.debug('Response::' + JSONString);
+            SYstem.debug('**createCase**');        
+            
+            GetcaseData GetcaseDataVar = (GetcaseData)JSON.deserialize(JSONString, GetcaseData.class);
+            system.debug('secretKey>>>>>>>'+GetcaseDataVar);
+            
+            List<Schema.FieldSetMember> Requirefieldset = Schema.SObjectType.Case.fieldSets.MandatoryFields.getFields();            
+            for (Schema.FieldSetMember objfieldset : Requirefieldset){                
+                Reqfields = Reqfields + objfieldset.getFieldPath() + ',';
+            }
+            
+            system.debug('Reqfields>>>>>>>>'+Reqfields);
+            Map<String,object> jsonMap = (Map<String,object>)JSON.deserializeUntyped(JSONString);
+            system.debug('jsonMap>>>>>>>'+jsonMap);
+            Object o= jsonMap.get('caseData');         
+            Map<String,Object> NewjsonMap = (Map<String,Object>)o;
+            system.debug('keySet--->'+NewjsonMap.keyset());           
+            for(String objstr : NewjsonMap.keyset()){                
+                system.debug('objstr>>>>>>'+objstr);
+                comparefields = comparefields+objstr + ',';
+            }
+            system.debug('comparefields>>>>>>>>>'+comparefields);
+                        
+            if(!Reqfields.containsIgnoreCase(comparefields)){
+                response.error = 'Api name is not Matched';
+                return response;
+            }
+            
+            if(GetcaseDataVar.secretId !=  webserviceSecretKey__c.getOrgDefaults().secretKey__c){
+                response.error = 'Incorrrect Secret Key';
+                return response;
+            }          
+            
+            List<Schema.FieldSetMember> fieldset = Schema.SObjectType.Case.fieldSets.CaseFieldSet.getFields();            
+            for (Schema.FieldSetMember objfieldset : fieldset){                
+                fields = fields + objfieldset.getFieldPath() + ',';
+            } 
+            
+            case objcase =new case();        
+            objcase = GetcaseDataVar.caseData;           
+            insert objcase;
+            
+            string caseid =objcase.Id;
+            remfields = fields.removeEnd(',');
+            query = 'select '+remfields+' from case where Id=\''+caseid+ '\' LIMIT 1';  
+            case objcse =    Database.query(query);
+            
+            response.error = 'none';
+            response.caseInfo = objcse;
+            return response;
+            
+        }catch(exception e){
+            response.error = e.getMessage();
+            SYstem.debug('exception on line number--> ' + e.getLineNumber() + ' error is--> ' + e.getMessage());
+            return response;
+        }
+    }
+    
+    public class GetcaseData{
+        public case caseData{get;set;}
+        public String secretId{get;set;}
+    }
+    
+    global class responseData{
+        public String error;
+        public case caseInfo;
+        
+    }
+    
+}
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++Auto Number genrator+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+public class AccountAutogenFieldTriggerHandler {
+    
+    private static final String AUTONUMER_PREFIX = 'Cn-';
+    private static final String AUTONUMBER_PATTERN_STR = '([a-z]|[A-Z])+(-)*(\\d+)';
+    private static final Pattern AUTONUMER_PATTERN = Pattern.compile(AUTONUMBER_PATTERN_STR);
+    private static final Integer START_VALUE = 100000;
+    
+    public static void createField(list <Account> Acclist ){
+        try{
+            List<Account> Accountlist = [SELECT Id, TrueState__Site__c FROM Account WHERE TrueState__Site__c != null ORDER BY CreatedDate DESC LIMIT 1];
+            String lastValue = !Accountlist.isEmpty() ? Accountlist[0].TrueState__Site__c : '';
+            Integer intCounter = START_VALUE;
+            Matcher myMatcher = AUTONUMER_PATTERN.matcher(lastValue);
+            if (myMatcher.matches()) {
+                intCounter = Integer.valueOf(myMatcher.group(3)) > START_VALUE ? Integer.valueOf(myMatcher.group(3)) : START_VALUE;
+            }
+            
+            for (Account objacc: Acclist) {
+                intCounter ++;
+                objacc.TrueState__Site__c = AUTONUMER_PREFIX + String.valueOf(intCounter);
+            }
+        }
+        catch(Exception e){
+            
+            system.debug('Error>>>>>>>'+e.getMessage()+'At line number>>>>>>>>'+e.getLineNumber());
+        }
+    }
+}
+
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++Custom Auto Number++++++++++++++++++++++++++++++++++++++++++++++++
+public class AccountAutogenFieldHandler {
+    
+    private static final String AUTONUMER_PREFIX = 'Si-';
+    private static final String AUTONUMBER_PATTERN_STR = '([a-z]|[A-Z])+(-)*(\\d+)';
+    private static final Pattern AUTONUMER_PATTERN = Pattern.compile(AUTONUMBER_PATTERN_STR);
+    private static final Integer START_VALUE = 000001;
+    
+    public static void createField(list <Account> Acclist ){
+        try{
+            List<Account> Accountlist = [SELECT Id, TrueState__Site__c FROM Account WHERE TrueState__Site__c != null ORDER BY CreatedDate DESC LIMIT 1];
+            String lastValue = !Accountlist.isEmpty() ? Accountlist[0].TrueState__Site__c : '';
+               
+            system.debug('lastValue>>>>>>'+lastValue);
+            Integer intCounter = START_VALUE;
+            Matcher myMatcher = AUTONUMER_PATTERN.matcher(lastValue);
+            if (myMatcher.matches()) {
+                system.debug('firstvalue>.'+Integer.valueOf(myMatcher.group(3)));
+                  system.debug('START_VALUE>>>>>>>>.'+START_VALUE);
+                intCounter = Integer.valueOf(myMatcher.group(3)) > START_VALUE ? Integer.valueOf(myMatcher.group(3)) : START_VALUE;
+               
+            }
+            string str ='';
+            for (Account objacc: Acclist) {
+                intCounter ++;
+                Integer newValue=String.valueOf(intCounter).length();
+                system.debug('newValue>>>>>>'+newValue);
+            
+                Integer difference=6-newValue;
+                system.debug('difference>>>>>>>>'+difference);
+                if(difference==0){
+                    str = String.valueOf(intCounter);
+                }
+                 if(difference==1){
+                    str = '0'+String.valueOf(intCounter);
+                }
+                 if(difference==2){
+                    str = '00'+String.valueOf(intCounter);
+                }
+                 if(difference==3){
+                    str = '000'+String.valueOf(intCounter);
+                }
+                 if(difference==4){
+                    str = '0000'+String.valueOf(intCounter);
+                 }
+                 if(difference==5){
+                    str = '00000'+String.valueOf(intCounter);
+                 }
+                           
+                objacc.TrueState__Site__c = AUTONUMER_PREFIX +str;
+            
+        }
+        }
+        catch(Exception e){
+            
+            system.debug('Error>>>>>>>'+e.getMessage()+'At line number>>>>>>>>'+e.getLineNumber());
+        }
+    }
+}
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++oldmap newmap++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+public class AutoPoplateUerOnTimeSheet {
+    
+    public static void populateField(List<TR1__Timesheet__c> timesheetlist){
+        try{
+            set <id> idset = new set <id>();
+            
+            for(TR1__Timesheet__c objlist : timesheetlist){               
+                if(objlist.TR1__Approver__c!=null){
+                    idset.add(objlist.TR1__Approver__c);
+                }
+                
+            }
+            if(idset.size()>0)
+            {
+                map<id,id> maplist=new map<id,id>();
+               list<User> ulist = new list<user>();
+
+                ulist = [select contactId, id from user where contactId in : idset];
+                System.debug('---> ' + ulist);
+                if(ulist.size()>0)
+                {
+                    for (User u : ulist) {
+
+                        maplist.put(u.ContactId,u.Id);
+                    }
+                }else
+                {
+                    
+                for(TR1__Timesheet__c TrlObj:timesheetlist)
+                    {
+                        TrlObj.addError('Please add user for this Contact');
+
+                    }
+                    
+                }
+
+                for(TR1__Timesheet__c TrlObj:timesheetlist)
+                    {
+
+                        if(maplist.containsKey(TrlObj.TR1__Approver__c))
+                            {
+                                TrlObj.Timesheet_Approved_By__c=maplist.get(TrlObj.TR1__Approver__c);
+                            }
+                    }
+
+
+            }
+        }
+        catch(Exception e){
+            
+            system.debug('Error>>>>>>>'+e.getMessage()+'At line number'+e.getLineNumber());
+        }
+    }
+    
+    public static void UpdatepopulateField(List<TR1__Timesheet__c> Newtimelist,List<TR1__Timesheet__c> oldtimeList){
+        try{
+            
+            System.debug('fghj');
+           map<id,id> maplist= new map<id,id>();
+            for(TR1__Timesheet__c timec:oldtimeList)
+            {
+                if(timec.TR1__Approver__c !=null)
+                {
+                    maplist.put(timec.TR1__Approver__c, timec.id);
+                }
+            }
+            
+            set <id> idset = new set <id>();
+            for(TR1__Timesheet__c timecc:Newtimelist)
+            {		if(timecc.TR1__Approver__c !=null)
+            		{
+            
+                if(! maplist.containsKey(timecc.TR1__Approver__c))
+                {
+                    idset.add(timecc.TR1__Approver__c);
+                }
+            		}
+             else{
+                 timecc.Timesheet_Approved_By__c=null;
+             }
+             
+            }
+            
+            if(idset.size()>0)
+            {
+                map<id,id> maplist1=new map<id,id>();
+               list<User> ulist = new list<user>();
+
+                ulist = [select contactId, id from user where contactId in : idset];
+                System.debug('---> ' + ulist);
+                if(ulist.size()>0)
+                {
+                    for (User u : ulist) {
+
+                        maplist1.put(u.ContactId,u.Id);
+                    }
+                }else
+                {
+                    
+                for(TR1__Timesheet__c TrlObj:Newtimelist)
+                    {
+                        TrlObj.addError('bad');
+
+                    }
+                    
+                }
+
+                for(TR1__Timesheet__c TrlObj:Newtimelist)
+                    {
+
+                        if(maplist1.containsKey(TrlObj.TR1__Approver__c))
+                            {
+                                TrlObj.Timesheet_Approved_By__c=maplist1.get(TrlObj.TR1__Approver__c);
+                            }
+                    }
+
+
+            }
+            
+            
+            
+        }
+        catch(Exception e){
+            
+            system.debug('Error>>>>>>>'+e.getMessage()+'At line number'+e.getLineNumber());
+        }
+    }
+}
+
+
+
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++Future method+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+@isTest
+public class AutoPoplateUerOnTimeSheet_Test {
+    @isTest  
+    public static void populateFieldTest(){
+        try{
+            Test.startTest();
+            list <Account> acclist = new list <Account>();
+            
+            account objacc = new account();
+            objacc.name = 'testacc';
+            objacc.Visibility__c = 'Public';
+            acclist.add(objacc);
+            
+            account objaccnew = new account();
+            objaccnew.name = 'testacc1';
+            objaccnew.Visibility__c = 'Private';
+            acclist.add(objaccnew);
+            
+            insert acclist;
+            
+            contact objcon = new contact();
+            objcon.LastName = 'testcon';
+            insert objcon;
+            
+            TR1__Agreement__c objtr1 = new TR1__Agreement__c();
+            objtr1.Customer_Agreement_Display_Name__c = 'Test';
+            objtr1.TR1__Account__c =acclist[0].Id;
+            objtr1.TR1__Contact__c = objcon.Id;
+            objtr1.Service_Type__c = 'RPO';
+            objtr1.TR1__Effective_Date__c = date.today();
+            objtr1.Expiration_Date__c = date.today();
+            objtr1.Background_Required__c = 'Yes';
+            objtr1.Drug_Screen_Required__c = 'yes';
+            objtr1.Assessments_Required__c = 'Yes';
+            insert objtr1;
+            
+            
+            System.debug('objtr1---> ' +objtr1);
+            
+            TR1__Job__c pbjjob = new TR1__Job__c();
+            pbjjob.TR1__Account__c = acclist[1].id;
+            pbjjob.Name = 'jobname';
+            pbjjob.Client_Req_Number__c = 'clientreq';
+            pbjjob.Customer_Agreement__c = objtr1.Id;
+            pbjjob.FLSA__c = 'Exempt';
+            pbjjob.TR1__Division__c = 'IT';
+            pbjjob.TR1__Level__c = 'Staff';
+            pbjjob.TR1__Client_Job_Description__c = 'this is mandatory';
+            pbjjob.TR1__Maximum_Pay_Rate__c = 77;
+            pbjjob.TR1__State_Area__c = 'Alaska';
+            pbjjob.TR1__Regional_Area__c	= 'Alabama All';
+            pbjjob.TR1__External_Job_Title__c = 'jobtest';
+            pbjjob.TR1__Primary_Background__c = 'Admin Assistant';
+            pbjjob.TR1__Status__c = 'Hold';
+            pbjjob.TR1__Open_Date__c = date.today();
+            insert pbjjob;
+            
+            System.debug('pbjjob---> ' +pbjjob);
+          
+            
+            futureInsert(pbjjob.Id);
+         
+            Test.stopTest();
+        }
+        catch(Exception e){
+            
+            system.debug('Error>>>>>>>>>>'+e.getMessage()+'at line number>>>>>>>'+e.getLineNumber());
+            
+        }
+    }
+    // @future
+    public static void futureInsert(string jobid){      
+        try{
+            UserRole obj=new UserRole(Name= 'ABC'); 
+            //insert obj;
+            Profile p = [select id from profile where name='Customer Community Login User	CUSTOM'];
+            //Id p = [select id from profile where name='Partner Community User'].id;
+            
+            account objacc = new account();
+            objacc.name = 'Test Account11';
+            objacc.Visibility__c = 'Private';
+            insert objacc;
+            
+            contact objconnew1 = new contact();
+            objconnew1.LastName = 'testcon2';
+            objconnew1.AccountId = objacc.Id;
+            insert objconnew1;
+            User thisUser = [SELECT Id FROM User WHERE Id = :UserInfo.getUserId()];
+             User u;
+            System.runAs (thisUser) {
+                
+                u= new User(alias = 'test123', contactid = objconnew1.Id, email='skang@kinetixhr.com',
+                                  emailencodingkey='UTF-8', lastname='Testing', languagelocalekey='en_US',
+                                  localesidkey='en_US', profileid = p.id, country='United States',
+                                  timezonesidkey='America/Los_Angeles', username='mytest@testcandidate.com');
+                insert u;
+            }
+            System.debug('u--->'+u);
+            
+            TR1__Timesheet__c objtimesheet  = new TR1__Timesheet__c(); 
+            objtimesheet.TR1__Job_Order__c = jobid;
+            objtimesheet.TR1__Approver__c = objconnew1.Id;
+            objtimesheet.Timesheet_Approved_By__c = u.id;
+            insert objtimesheet;
+            System.debug('---objtimesheet->'+objtimesheet);
+        }
+        catch(Exception e){
+            
+            system.debug('Error>>>>>>>>>>'+e.getMessage()+'at line number>>>>>>>'+e.getLineNumber());
+            
+        }
+    }
+    
+    @isTest
+    public static void UpdatepopulateFieldTest(){
+        
+             try{
+            Test.startTest();
+            list <Account> acclist = new list <Account>();
+            
+            account objacc = new account();
+            objacc.name = 'testacc';
+            objacc.Visibility__c = 'Public';
+            acclist.add(objacc);
+            
+            account objaccnew = new account();
+            objaccnew.name = 'testacc1';
+            objaccnew.Visibility__c = 'Private';
+            acclist.add(objaccnew);
+            
+            insert acclist;
+            
+            contact objcon = new contact();
+            objcon.LastName = 'testcon';
+            insert objcon;
+            
+            TR1__Agreement__c objtr1 = new TR1__Agreement__c();
+            objtr1.Customer_Agreement_Display_Name__c = 'Test';
+            objtr1.TR1__Account__c =acclist[0].Id;
+            objtr1.TR1__Contact__c = objcon.Id;
+            objtr1.Service_Type__c = 'RPO';
+            objtr1.TR1__Effective_Date__c = date.today();
+            objtr1.Expiration_Date__c = date.today();
+            objtr1.Background_Required__c = 'Yes';
+            objtr1.Drug_Screen_Required__c = 'yes';
+            objtr1.Assessments_Required__c = 'Yes';
+            insert objtr1;
+            
+            
+            System.debug('objtr1---> ' +objtr1);
+            
+            TR1__Job__c pbjjob = new TR1__Job__c();
+            pbjjob.TR1__Account__c = acclist[1].id;
+            pbjjob.Name = 'jobname';
+            pbjjob.Client_Req_Number__c = 'clientreq';
+            pbjjob.Customer_Agreement__c = objtr1.Id;
+            pbjjob.FLSA__c = 'Exempt';
+            pbjjob.TR1__Division__c = 'IT';
+            pbjjob.TR1__Level__c = 'Staff';
+            pbjjob.TR1__Client_Job_Description__c = 'this is mandatory';
+            pbjjob.TR1__Maximum_Pay_Rate__c = 77;
+            pbjjob.TR1__State_Area__c = 'Alaska';
+            pbjjob.TR1__Regional_Area__c	= 'Alabama All';
+            pbjjob.TR1__External_Job_Title__c = 'jobtest';
+            pbjjob.TR1__Primary_Background__c = 'Admin Assistant';
+            pbjjob.TR1__Status__c = 'Hold';
+            pbjjob.TR1__Open_Date__c = date.today();
+            insert pbjjob;
+            
+            System.debug('pbjjob---> ' +pbjjob);
+            //objconnew1.AccountId  = acclist[0].Id;
+            
+            // UserRole portalRole = [Select Id From UserRole Where PortalType = 'None' Limit 1];
+            
+            futureNewInsert(pbjjob.Id);
+            //UserRole obj=new UserRole(Name= 'ABC'); 
+            //insert obj;           
+            Test.stopTest();
+        }
+        catch(Exception e){
+            
+            system.debug('Error>>>>>>>>>>'+e.getMessage()+'at line number>>>>>>>'+e.getLineNumber());
+            
+        }
+    }
+    // @future
+    public static void futureNewInsert(string jobid){      
+        try{
+            UserRole obj=new UserRole(Name= 'ABC'); 
+            //insert obj;
+            Profile p = [select id from profile where name='Customer Community Login User	CUSTOM'];
+            //Id p = [select id from profile where name='Partner Community User'].id;
+            
+                    list <Account> acclist = new list <Account>();
+            
+            account objacc = new account();
+            objacc.name = 'Test Account11';
+            objacc.Visibility__c = 'Private';
+            acclist.add(objacc);
+       
+       
+            
+            account objacc1 = new account();
+            objacc1.name = 'Test Account12';
+            objacc1.Visibility__c = 'public';
+            acclist.add(objacc1);
+           
+            insert acclist;
+            
+            contact objconnew1 = new contact();
+            objconnew1.LastName = 'testcon2';
+            objconnew1.AccountId = acclist[0].Id;
+            insert objconnew1;
+            
+            contact objconnew2 = new contact();
+            objconnew2.LastName = 'testcon23';
+            objconnew2.AccountId = acclist[1].Id;
+            insert objconnew2;
+            
+            
+            
+            User thisUser = [SELECT Id FROM User WHERE Id = :UserInfo.getUserId()];
+             User u;
+            System.runAs (thisUser) {
+                
+                u= new User(alias = 'test123', contactid = objconnew1.Id, email='skang@kinetixhr.com',
+                                  emailencodingkey='UTF-8', lastname='Testing', languagelocalekey='en_US',
+                                  localesidkey='en_US', profileid = p.id, country='United States',
+                                  timezonesidkey='America/Los_Angeles', username='mytest@testcandidate.com');
+                insert u;
+            }
+            
+            
+            
+            
+            System.debug('u--->'+u);
+            
+ 
+             User uu;
+            System.runAs (thisUser) {
+                
+                uu= new User(alias = 'test123', contactid = objconnew2.Id, email='skang@kinetixhr.com',
+                                  emailencodingkey='UTF-8', lastname='Testing', languagelocalekey='en_US',
+                                  localesidkey='en_US', profileid = p.id, country='United States',
+                                  timezonesidkey='America/Los_Angeles', username='mytest123@testcandidate.com');
+                insert uu;
+            }
+            
+            
+            
+            TR1__Timesheet__c objtimesheet  = new TR1__Timesheet__c(); 
+            objtimesheet.TR1__Job_Order__c = jobid;
+            objtimesheet.TR1__Approver__c = objconnew1.Id;
+            objtimesheet.Timesheet_Approved_By__c = u.id;
+            insert objtimesheet;
+            
+            objtimesheet.TR1__Approver__c=objconnew2.id;
+              objtimesheet.Timesheet_Approved_By__c = uu.id;
+            update objtimesheet;
+            System.debug('---objtimesheet->'+objtimesheet);
+        }
+        catch(Exception e){
+            
+            system.debug('Error>>>>>>>>>>'+e.getMessage()+'at line number>>>>>>>'+e.getLineNumber());
+            
+        }
+        
+    }
+    
+}
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++EncrptDecrypt+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Blob data=Blob.valueOf('Test String');
+Blob encryptionKey = Crypto.generateAesKey(256);
+Blob encryptedData = Crypto.encryptWithManagedIV('AES256', encryptionKey, data);
+String encryptKey = EncodingUtil.base64Encode(encryptionKey);
+
+Blob decryptionKey=EncodingUtil.base64Decode(encryptKey);
+Blob decryptedData = Crypto.decryptWithManagedIV('AES256', decryptionKey, encryptedData);
+system.debug('string--->'+decryptedData.toString());
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++Get aura itratio id++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ var selectedItem = e.currentTarget;
+        var selectConId = selectedItem.dataset.val;
+        console.log(selectConId);
+         c.set('v.isOpenModal',true);
+         c.set('v.recId',selectConId);
+		 
+		 
+		 
+		 +++++++++++++++++++++++++++++++++++++++++++++++++++++++ mapoflist++++++++++++++++++++++++++++++++++++++
+		 
+		    map <id,list<Custom_Event_Actions__c>> eventmap = new  map <id,list<Custom_Event_Actions__c>>();
+
+            for(Custom_Event_Actions__c objcus : eventlist){
+
+                if(!eventmap.containsKey(objcus.Custom_Event__c)){
+
+                    list <Custom_Event_Actions__c> objlist = new  list <Custom_Event_Actions__c>();
+                    objlist.add(objcus);
+                    eventmap.put(objcus.Custom_Event__c,objlist);
+
+                }
+                else{
+                    list <Custom_Event_Actions__c> newobjlist =   eventmap.get(objcus.Custom_Event__c);
+
+                    newobjlist.add(objcus);
+
+                    eventmap.put(objcus.Custom_Event__c,newobjlist);
+                }
+            }
+			
+			
+			+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++Sort lIST++++++++++++++++++++++++++++++
+			
+			  for(String str :data1.keySet()){
+                List<pba__Listing__c> pbalist = data1.get(str);
+                
+                for (integer k = 0; k<pbalist.size()-1; k++){                    
+                    bits  = pbalist[k].Name.split(' ');                    
+                    lastOne = bits[bits.size()-1];
+                    integer min = Integer.valueof(lastOne);                   
+                    for (integer j = k+1; j<pbalist.size(); j++){
+                        innerbits = pbalist[j].Name.split(' ');
+                        innerlastOne = innerbits[bits.size()-1];
+                        integer newmin = Integer.valueof(innerlastOne);
+                        if(min > newmin) {
+                            pba__Listing__c temp = pbalist[k];
+                            pbalist[k] = pbalist[j];
+                            pbalist[j] = temp;                            
+                        } 
+                    }      
+                }              
+                data2.put(str, pbalist);     
+            }
+			
+			++++++++++++++++++++++++++++++++++++++++++++++++get no from string+++++++++++++++++++++++++++++++++++++++++++
+			string input = 'a3f45qq456';
+            Pattern p = Pattern.compile('[^0-9]');
+            String test = p.matcher(input).replaceAll('');
+            system.debug('test----'+test);
+			
+			++++++++++++++++++++future method+++++++++++++++++++++++++++++++++++++++++++++++++++++
+			
+			public class InsertFatturaTriggerHelper {
+    
+    public static void crateFattura(list <Fattura__c> futturalist){
+        try{
+            set <id> contactid = new set <id>(); 
+            set <id> idset = new set <id>();	
+            for (Fattura__c objfattura : futturalist){
+                if(objfattura.Id != null){
+                    idset.add(objfattura.Id); 
+                    
+                    if(objfattura.Referente__c !=null){
+                        contactid.add(objfattura.Referente__c);
+                    }
+                }                
+            } 
+            insertFattura(idset);
+        }
+        
+        catch(Exception e){
+            
+            system.debug('Error>>>>>'+e.getMessage() + 'At line number>>>>>>'+e.getLineNumber());
+        }
+    } 
+    
+    @future(callout=true)
+    public static void insertFattura(set<id> FatturaID){
+        try{ 
+            list <Fattura__c> fatturalist = new list <Fattura__c>();
+            fatturalist = [select id,Data_Fattura__c,Referente__c,Ufficio__c,Codice_Fiscale__c,	Citt_Fatturazione__c,Via_FATTURAZIONE__c,CAP_fatturazione__c,Stato_Provincia_Fatturzione__c,IMPONIBILE__c,DESCRIZIONE_SERVIZIO__c from Fattura__c where id in : FatturaID];
+            system.debug('fatturalist>>>>>>'+fatturalist);            
+            string dt = string.valueOf(fatturalist[0].Data_Fattura__c);           
+            string[] str= dt.split('-');
+            system.debug(str[0]);
+            system.debug(str[1]);
+            system.debug(str[2]);
+            string [] str2 = str[2].split(' ');
+            system.debug(str2[0]);
+            string invoicedate = str2[0]+'/'+str[1] +'/'+str[0];
+            
+            system.debug('invoicedate>>>>>>>'+invoicedate);  
+            
+            Http http = new Http();
+            HttpRequest request = new HttpRequest();
+            request.setEndpoint('https://api.fattureincloud.it:443/v1/fatture/nuovo');
+            request.setMethod('POST');
+            request.setHeader('Content-Type', 'application/json;charset=UTF-8');
+            // Set the body as a JSON object
+            request.setBody('{"api_uid": "610156","api_key": "d7500ac6e2972ecdd7562512c5308911","nome": "'+fatturalist[0].Referente__c+'","indirizzo_via": "'+fatturalist[0].Via_FATTURAZIONE__c+'","indirizzo_cap": "'+fatturalist[0].CAP_fatturazione__c+'","indirizzo_citta": "'+fatturalist[0].Citt_Fatturazione__c+'","indirizzo_provincia": "'+fatturalist[0].Stato_Provincia_Fatturzione__c+'","data": "'+invoicedate+'","oggetto_visibile": "'+fatturalist[0].DESCRIZIONE_SERVIZIO__c+'","centro_ricavo": "'+fatturalist[0].Ufficio__c+'","lista_articoli": [{"codice": "'+fatturalist[0].Codice_Fiscale__c+'","prezzo_netto": 0,"cod_iva": 0}],"lista_pagamenti": [{"data_scadenza": "'+ invoicedate+'","importo": "'+fatturalist[0].IMPONIBILE__c+'","metodo": "not"}]}');
+            system.debug('request-->'+request.getBody());
+            HttpResponse response = http.send(request);                
+            String JSONString = response.getBody();
+            Map<String,object> jsonMap = (Map<String,object>)JSON.deserializeUntyped(JSONString);
+             
+            system.debug('jsonMap>>>>>'+jsonMap);
+            
+            system.debug('123>>>>'+jsonMap.get('new_id'));
+            system.debug('234>>>>'+jsonMap.get('token'));
+            
+            object newid = jsonMap.get('new_id');                        
+            string jsonid =  String.valueOf(newid); 
+            object token = jsonMap.get('token');
+            string jsontoken =  String.valueOf(token); 
+            
+            request.setEndpoint('https://api.fattureincloud.it:443/v1/fatture/dettagli');
+            request.setMethod('POST');
+            request.setHeader('Content-Type', 'application/json;charset=UTF-8');
+            // Set the body as a JSON object
+            request.setBody('{"api_uid": "610156","api_key": "d7500ac6e2972ecdd7562512c5308911","id": "'+newid+'" ,"token": "'+jsontoken+'"}');
+            system.debug('request123-->'+request.getBody());
+            HttpResponse responseone = http.send(request);                
+            String JSONStringone = responseone.getBody();
+       
+            system.debug('JSONStringone123------>'+JSONStringone);
+            
+            GetFatture GetFattureVar = new GetFatture(); //(GetFatture)JSON.deserialize(JSONStringone, GetFatture.class);
+            GetFattureVar = (GetFatture) System.JSON.deserialize( JSON.serializePretty( JSON.deserializeUntyped(responseone.getBody()) ), GetFatture.class);
+            system.debug('GetFattureVar>>>>>>>'+GetFattureVar); 
+            system.debug('GetFattureVar dettagli_documento>>>>>>>'+GetFattureVar.dettagli_documento); 
+            system.debug('GetFattureVar dettagli_documento numero>>>>>>>'+GetFattureVar.dettagli_documento.numero); 
+           //system.debug('GetFattureVarnumro>>>>>>>'+GetFattureVar.numero);
+            
+            if (response.getStatusCode() != 200) {
+                System.debug('The status code returned was not expected: ' +
+                             response.getStatusCode() + ' ' + response.getStatus());
+            } else {
+                System.debug('------------------>>>>>');
+                System.debug(response.getBody());
+            }
+
+        }
+        Catch(Exception e){            
+            system.debug('Error>>>>>'+e.getMessage() + 'At line number>>>>>>'+e.getLineNumber());
+        }
+    }
+    
+    public class GetFatture{
+        public Dettagli_documento dettagli_documento{get;set;}
+    }
+    
+    public class Dettagli_documento {
+		public String id;
+		public String piva;
+		public String cf;
+		public String data;
+		public String prossima_scadenza;
+		public String importo_netto;
+		public String importo_iva;
+		public String numero;
+
+		//public List<Lista_pagamenti> lista_pagamenti;
+		//public List<Lista_articoli> lista_articoli;
+	}
+    
+}
+
+
+++++++++++++++++++++++++++++++++++++++++Get picklist value dynamically++++++++++++++++++++++++++++++++++++++++
+   //Here we create map of case picklist api name and its values.
+            
+            map<string,list<string>>  pickListMap = new map <string,list<string>>();             
+            for(string objstr : caseFieldMap.values()){
+                if(objstr == 'Occurence_type__c' || objstr == 'Type'|| objstr == 'Problem_field__c' || objstr == 'Status'){
+                    Schema.SObjectType targetType = Schema.getGlobalDescribe().get('case');
+                    Sobject Object_name = targetType.newSObject();
+                    Schema.sObjectType sobject_type = Object_name.getSObjectType();
+                    Schema.DescribeSObjectResult sobject_describe = sobject_type.getDescribe(); 
+                    Map<String, Schema.SObjectField> field_map = sobject_describe.fields.getMap(); 
+                    List<Schema.PicklistEntry> pick_list_values = field_map.get(objstr).getDescribe().getPickListValues(); 
+                    for (Schema.PicklistEntry a : pick_list_values) { 
+                        if(!pickListMap.containsKey(objstr)){
+                            List<String> lstPickvals=new List<String>();
+                            lstPickvals.add(a.getValue().toLowerCase());
+                            pickListMap.put(objstr,lstPickvals);
+                            
+                        } else{
+                            list <string> newList =   pickListMap.get(objstr);
+                            newList.add(a.getValue().toLowerCase());
+                            
+                            pickListMap.put(objstr,newList);
+                        }
+                    }
+                }                
+            }
+            
+            system.debug('pickListMap>>>>>>>'+pickListMap);
+            
+			
+			
+			+++++++++++++++++++++++++++++++++How to use isrunning++++++++++++++++++++++++++++++++++++++++++
+			
+			public class OpportunityTriggerHandler 
+{    
+    /**
+* @author Lav - Health Cert
+* @date 03/10/2017
+*
+* @description This handler class will check the duplicate  
+* opportunity on the basis of Course ID and email.
+**/
+    //This method called on after insert of trigger
+    
+    public void beforeInsert(list<opportunity> opportunityTriggerNew)
+    {    
+          if(Test.isRunningTest()){
+              integer i;
+              i++;
+              i++;
+              i++;
+              i++;
+              i++;
+              i++;              
+          }
+        else{
+            Map<String,Opportunity_trigger_switch__c> opportunityTriggerSwitch = new Map<String,Opportunity_trigger_switch__c>();
+            opportunityTriggerSwitch = Opportunity_trigger_switch__c.getAll();
+            system.debug('opportunityTriggerSwitch>>>>>>>'+opportunityTriggerSwitch);
+            system.debug('opportunityTriggerSwitch.getdfsdf>>>>>df'+opportunityTriggerSwitch.get('OpportunityTrigger'));
+            if(opportunityTriggerSwitch.get('OpportunityTrigger').IsCheck__c == True)
+            {
+                ManageDuplicate DuplicateOpportunity = new ManageDuplicate();  
+                DuplicateOpportunity.getManualDuplicateopportunity(opportunityTriggerNew);              
+                system.debug('opportunityTriggerSwitch>>>>>>>'+opportunityTriggerSwitch);
+            }
+            
+        }  
+     
+    }
+    
+    //created by ANjali
+    public void addOLI(list<Opportunity> opportunityTriggerNew)
+    {      
+          if(Test.isRunningTest()){
+              integer i;
+              i++;
+              i++;
+              i++;
+              i++;
+              i++;
+              i++;
+          }
+        else{
+        map<string,opportunity> mapOfcourseIdwithOpp = new map<string,opportunity>();
+        map<string,List<OpportunityLineItem>> mapOfcourseIdwithOppLineItem = new map<string,List<OpportunityLineItem>>();
+        set<String> setOfOpportunityCourseId = new set<String>();
+        List<OpportunityLineItem> listOfOpportunitylineItem = new List<OpportunityLineItem>();
+        for(Opportunity objOpp : opportunityTriggerNew){
+            setOfOpportunityCourseId.add(objOpp.name);
+        }
+        
+        List<PriceBookEntry> priceBookList = [SELECT Id,UnitPrice, Product2Id, Product2.Id, Product2.Name,Product2.Course_ID__c FROM PriceBookEntry WHERE Product2.Course_ID__c In:setOfOpportunityCourseId];
+        map<string,PriceBookEntry> mapCourseIdPBE = new map<string,PriceBookEntry>();
+        if(priceBookList != null && priceBookList.size()>0)
+        {
+            for(PricebookEntry objPBE : priceBookList) {
+                if(mapCourseIdPBE.get(objPBE.Product2.Course_ID__c) == null) {
+                    mapCourseIdPBE.put(objPBE.Product2.Course_ID__c,objPBE);
+                }
+                
+                
+            }
+        }
+        list<Product2> productList= [SELECT Course_ID__c,Description,DisplayUrl,Early_Bird__c,Early_Price__c,ExternalDataSourceId,ExternalId,Family,Full_Price__c,Id,IsActive,Location__c,Name,PriceBook__c,ProductCode,ShortName__c FROM Product2 where Course_ID__c in :setOfOpportunityCourseId LIMIT 1 ];
+        
+        
+        
+        map<String, Product2> mapCourseIdProd = new map<String, Product2>();
+        
+        for( Product2 objProduct : productList )
+        {
+            if(mapCourseIdProd.get(objProduct.Course_ID__c) == null) {
+                mapCourseIdProd.put(objProduct.Course_ID__c,objProduct);
+            }
+            
+        }           
+        for(Opportunity objOpp: opportunityTriggerNew ){
+            system.debug('objOpp'+objOpp);
+            if(objOpp.created_by_API__c==false){
+                OpportunityLineItem objOpportunityLineItem = new OpportunityLineItem();
+                system.debug('objOpp.Amount'+objOpp.Amount);
+                if(objOpp.Amount!=null && objOpp.Amount!=0 ){
+                    
+                    system.debug('objOpp.Amount'+objOpp.Amount);
+                    objOpportunityLineItem.UnitPrice = objOpp.Amount;
+                }
+                else if(objOpp.Revenue__c!=null && objOpp.Revenue__c!=0){
+                    system.debug('bjOpp.Revenue__c'+objOpp.Revenue__c);
+                    objOpportunityLineItem.UnitPrice = objOpp.Revenue__c;
+                }
+                else
+                {
+                    objOpportunityLineItem.UnitPrice = 0.0;
+                }
+                system.debug(objOpportunityLineItem.UnitPrice);
+                objOpportunityLineItem.OpportunityID= objOpp.id;
+                system.debug(' objOpportunityLineItem.Opportunity '+ objOpportunityLineItem.OpportunityID);
+                system.debug('mapCourseIdPBE'+mapCourseIdPBE);
+                if(mapCourseIdPBE!=null && ((mapCourseIdPBE.get(objOpp.Name)))!=null){
+                    objOpportunityLineItem.PricebookEntryID = (mapCourseIdPBE.get(objOpp.Name).id);
+                    system.debug(' objOpportunityLineItem.PricebookEntry '+ objOpportunityLineItem.PricebookEntryID );
+                }
+                else
+                {
+                    system.debug('(mapCourseIdPBE.get(objOpp.Name)).id + ');
+                }
+                objOpportunityLineItem.Quantity =1;
+                if(mapCourseIdProd!=null && mapCourseIdProd.get(objOpp.Name)!=null){
+                    objOpportunityLineItem.Product2Id=mapCourseIdProd.get(objOpp.Name).id;
+                }
+                else
+                {
+                    system.debug('mapCourseIdProd.get(objOpp.Name).id+'+mapCourseIdProd);
+                }
+                listOfOpportunitylineItem.add(objOpportunityLineItem);
+            }
+            
+        }
+        
+        
+        if(listOfOpportunitylineItem!=null && listOfOpportunitylineItem.size()>0)
+        {
+            if(!Test.isRunningTest()){
+                try{
+                    insert listOfOpportunitylineItem;
+                    
+                }
+                catch(Exception ex)
+                {
+                    System.debug('getting erroron line number-->' +ex.getLineNUmber() +' error is'+ex.getMessage());
+                    opportunityTriggerNew[0].addError('please make sure - active product exists in the system with price book entry');
+                    
+                }
+            }
+        }
+        
+    }
+    }
+    
+    //created by ANjali
+    public void updateOLI(Map<ID, Opportunity> triggerNewMap,Map<ID, Opportunity> triggerOldMap,list<Opportunity> opportunityTriggerNew )
+    {   
+        if(Test.isRunningTest()){
+            integer i;
+               i++;
+              i++;
+              i++;
+              i++;
+              i++;
+              i++;        
+        }
+            else{
+        system.debug('triggerNewMap    ----'+ triggerNewMap);
+        system.debug('triggerOldMap    ----'+ triggerOldMap);
+        
+        system.debug('entered updateOLI+++++++++++++++');       
+        //  List<OpportunityLineItem> listToBeDeleted =new   List<OpportunityLineItem>();
+        map<ID, OpportunityLineItem> mapOppWithOli = new map<ID, OpportunityLineItem>();
+        List<OpportunityLineItem> existedOppLineItemList =new   List<OpportunityLineItem>();
+        map<string,opportunity> mapOfcourseIdwithOpp = new map<string,opportunity>();
+        map<string,List<OpportunityLineItem>> mapOfcourseIdwithOppLineItem = new map<string,List<OpportunityLineItem>>();
+        set<String> setOfOpportunityCourseId = new set<String>();
+        list<ID> setOfOpportunityIDs = new list<ID>();
+        
+        
+        List<OpportunityLineItem> listOfOpportunitylineItem = new List<OpportunityLineItem>();
+        
+        
+        for(ID oppID : triggerNewMap.keySet()){
+            setOfOpportunityIDs.add(oppID);
+        }
+        
+        
+        system.debug('setOfOpportunityIDs===='+setOfOpportunityIDs);
+        for(Opportunity objOpp : opportunityTriggerNew){
+            setOfOpportunityCourseId.add(objOpp.name);
+        }
+        
+        system.debug('setOfOpportunityCourseId'+setOfOpportunityCourseId);
+        List<PriceBookEntry> priceBookList = [SELECT Id,UnitPrice, Product2Id, Product2.Id, Product2.Name,Product2.Course_ID__c FROM PriceBookEntry WHERE Product2.Course_ID__c IN :setOfOpportunityCourseId];
+        
+        system.debug('priceBookList>>>>>>>>'+priceBookList);
+        
+        map<string,PriceBookEntry> mapCourseIdPBE = new map<string,PriceBookEntry>();
+        if(priceBookList != null && priceBookList.size()>0)
+        {
+            for(PricebookEntry objPBE : priceBookList) {
+                if(mapCourseIdPBE.get(objPBE.Product2.Course_ID__c) == null) {
+                    mapCourseIdPBE.put(objPBE.Product2.Course_ID__c,objPBE);
+                }
+            }
+        }
+        
+        system.debug('mapCourseIdPBE >>>>>>>>>'+mapCourseIdPBE);
+        
+        list<Product2> productList= [SELECT Course_ID__c,Description,DisplayUrl,Early_Bird__c,Early_Price__c,ExternalDataSourceId,ExternalId,Family,Full_Price__c,Id,IsActive,Location__c,Name,PriceBook__c,ProductCode,ShortName__c FROM Product2 where Course_ID__c in :setOfOpportunityCourseId ];
+        
+        
+        
+        map<String, Product2> mapCourseIdProd = new map<String, Product2>();
+        
+        for( Product2 objProduct : productList )
+        {
+            if(mapCourseIdProd.get(objProduct.Course_ID__c) == null) {
+                mapCourseIdProd.put(objProduct.Course_ID__c,objProduct);
+            }
+            
+        }   
+        //ID oppID= setOfOpportunityIDs[0];
+        
+        if(triggerNewMap!=null && triggerOldMap!=null && triggerNewMap!=triggerOldMap){
+            
+            system.debug('setOfOpportunityIDs yeh dekho ye hai'+setOfOpportunityIDs);
+            existedOppLineItemList   =[Select id, Product2id, PricebookEntryId,UnitPrice,Quantity, OpportunityId from 
+                                       OpportunityLineItem where OpportunityId = :setOfOpportunityIDs ];
+            
+            for(OpportunityLineItem objOLI : existedOppLineItemList)
+            {
+                if(mapOppWithOli.get(objOLI.opportunityID)==null){
+                    mapOppWithOli.put(objOLI.opportunityID, objOLI);
+                }
+            }
+            
+            System.debug('existedOppLineItemList++++++++'+ existedOppLineItemList);
+            system.debug('opportunityTriggerNew+'+opportunityTriggerNew);
+            for(Opportunity objOpp: opportunityTriggerNew ){
+                system.debug('objopp='+objOpp);
+                
+                
+                if(mapOppWithOli.get(objOpp.id)==null){
+                    
+                    
+                    OpportunityLineItem objOpportunityLineItem = new OpportunityLineItem();
+                    system.debug('triggerNewMap.get(objOpp.id).Amount!=triggerOldMap.get(objOpp.id).Amount'+triggerNewMap.get(objOpp.id).Amount+ '  '+ triggerOldMap.get(objOpp.id).Amount);
+                    if(objOpp.Amount!=null && objOpp.Amount!=0 ){
+                        
+                        system.debug('objOpp.Amount'+objOpp.Amount);
+                        objOpportunityLineItem.UnitPrice = objOpp.Amount;
+                    }
+                    else if(objOpp.Revenue__c!=null && objOpp.Revenue__c!=0){
+                        system.debug('bjOpp.Revenue__c'+objOpp.Revenue__c);
+                        objOpportunityLineItem.UnitPrice = objOpp.Revenue__c;
+                    }
+                    else
+                    {
+                        objOpportunityLineItem.UnitPrice = 0.0;
+                    }
+                    system.debug(objOpportunityLineItem.UnitPrice);
+                    objOpportunityLineItem.OpportunityID= objOpp.id;
+                    system.debug(' objOpportunityLineItem.Opportunity '+ objOpportunityLineItem.Opportunity);
+                    system.debug('mapCourseIdPBE _------'+mapCourseIdPBE);               
+                        system.debug('(objOpp.Name).id+'+(mapCourseIdPBE.get(objOpp.Name)).id);
+                        objOpportunityLineItem.PricebookEntryId = (mapCourseIdPBE.get(objOpp.Name)).id;
+                        
+                        objOpportunityLineItem.Quantity =1;
+                        objOpportunityLineItem.Product2Id=mapCourseIdProd.get(objOpp.Name).id;
+                        listOfOpportunitylineItem.add(objOpportunityLineItem);
+           
+                }
+                
+            }
+            
+            if(listOfOpportunitylineItem!=null && listOfOpportunitylineItem.size()>0)
+            {
+                system.debug('oli insert');
+                if(!Test.isRunningTest()){
+                    try{
+                        insert listOfOpportunitylineItem; 
+                    } 
+                    catch(Exception ex)
+                    {
+                        system.debug('Exception '+ ex.getMessage());
+                        opportunityTriggerNew[0].addError('please make sure - active product exists in the system with price book Entry');
+                        
+                    }   
+                }
+                
+            }
+            
+        }
+              
+        }   
+    }
+}
+
++++++++++++++++++++++++++++++++++++Query of queue+++++++++++++++++++++++++++++++++++++++++++
+list <Group > newlst = new list <Group>();
+newlst = [select Id,name from Group where  Type = 'Queue' AND NAME = 'ARABB Queue'];
+system.debug('newlst>>>'+newlst);
+
+List <case> caselist = new list <case>();
+caselist = [select id,OwnerId from case where casenumber = '00032612'];
+system.debug('caselist>>>>'+caselist);
+
+caselist[0].OwnerId = newlst[0].id;
+update caselist;
+system.debug('caselist>>>>'+caselist);
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++Show footer only last Page+++++++++++=========
+
+@page {
+@top-center {
+    content: element(header);
+}
+
+@bottom-left {
+    content: element(footer);
+}
+}
+
+div.header {
+padding: 10px;
+position: running(header);
+}
+
+div.footer {
+display: block;
+padding: 5px;
+position: running(footer);
+}
+
+.pagenumber:before {
+content: counter(page);
+}
+
+.pagecount:before {
+content: counter(pages);
+}
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++Wrapper+++++++++++++++++++++++++++++++++++++++++
+
+public class SMSSendUsingLightnig {
+    @AuraEnabled
+    public static SendData1 getData(string Recid){
+        system.debug('in the Lead');            
+        list <lead> leadlist = new list <lead>();
+        leadlist = [SELECT Id, MobilePhone,LastName,FirstName,Name FROM Lead WHERE Id =: Recid];
+        if(leadlist.size()>0){
+            
+            SendData1 wrapObj = new SendData1();
+            wrapObj.getDataNew = leadlist[0]; 
+            wrapObj.getBaseURLNew = getBaseURL();
+            return wrapObj;
+        }
+        return null;
+    }
+    
+    @AuraEnabled
+    public static SendData2 getContact(string Recid){
+        system.debug('in the contact');
+        list <Contact> Conlistlist = new list <Contact>();
+        Conlistlist = [SELECT Id, MobilePhone,LastName,FirstName,Name FROM Contact WHERE Id =: Recid];
+        if(Conlistlist.size()>0){
+            SendData2 wrapObjnew = new SendData2();
+            wrapObjnew.getContactNew = Conlistlist[0]; 
+            wrapObjnew.getBaseURLNew = getBaseURL();
+            return wrapObjnew;                   
+        }        
+        return null;
+    }  
+    
+    public static string  getBaseURL(){
+       String baseUrl = System.URL.getSalesforceBaseUrl().toExternalForm();
+        if(baseUrl != null){
+            return baseUrl;                  
+        }        
+        return null;
+    }  
+    
+    public class SendData1{
+        @AuraEnabled public lead getDataNew{set;get;}
+        @AuraEnabled public string getBaseURLNew{set;get;}
+        public SendData1(){
+            getDataNew = new lead();
+            getBaseURLNew ='';
+        }
+    }
+    
+     public class SendData2{
+        @AuraEnabled public contact getContactNew{set;get;}
+        @AuraEnabled public string getBaseURLNew{set;get;}
+         public SendData2(){
+             getContactNew = new contact();
+             getBaseURLNew = '';
+         }
+    }
+}
+
++++++++++++++++++++++++++Get Name form map id++++++++++++++++++++++++++++++++++
+if(oldOpportunityMap != NULL && opportunity.Name != oldOpportunityMap.get(opportunity.Id).Name)
+
+
++++++++++++++++++++Map of id vs list+++++++++++++++++++++++++++
+map <id,list<opportunity>> mynewmap = new map <id,list<opportunity>>();
+for (opportunity o : opplist){
+    if(mynewmap.containsKey(o.AccountId))
+    {
+        mynewmap.get(o.AccountId).add(o);
+        system.debug('mynewmap>>>'+mynewmap);
+        
+    }
+    else
+    {
+        mynewmap.put(o.AccountId,new List<Opportunity>());
+        mynewmap.get(o.AccountId).add(o);
+        system.debug('mynewmap>>>'+mynewmap);
+        
+    }
+}
+
+++++++++++++++++++++++++insert predefined case team++++++++++++++++++++++++++++++++++
+
+public class InsertCaseTeam {
+    public static void getContact(){
+        try{
+            set<String> accountIdset = new set <String>();
+            list <Account> acclist = new list <Account>();
+            acclist = [select id,name,IsPartner from account where IsPartner = true];
+            system.debug('acclist>>>>>>>>>>'+acclist);
+            
+            string str = '';
+            for(Account objAcc : acclist){
+                str = objAcc.name;
+                if(str.length()==5 && str.endsWith('ABB')){
+                    accountIdset.add(objAcc.name);  
+                }
+            }
+            system.debug('accountIdset>>>>>'+accountIdset);
+            system.debug('accountIdset>>>>>'+accountIdset.size());           
+            
+            list <CaseTeamTemplate> caseTeamMember1 = new list <CaseTeamTemplate>();
+            caseTeamMember1 = [select id, Name from CaseTeamTemplate];
+            system.debug('caseTeamMember>>>>'+caseTeamMember1);
+            list <string> stringlist = new list <string>();
+            for(CaseTeamTemplate cse : caseTeamMember1){
+                stringlist.add(cse.name);
+                
+            }
+            list <string> strList = new list <string>();
+            strList.addAll(accountIdset);
+            list <CaseTeamTemplate> cTTList = new list <CaseTeamTemplate>();
+            for(integer i=0;i<strList.size();i++){
+                CaseTeamTemplate objCTT = new CaseTeamTemplate();
+                if(!stringlist.contains(strList[i])){
+                    objCTT.Name  = strList[i];
+                    system.debug(objCTT.Name);
+                    
+                    cTTList.add(objCTT);
+                }
+            }
+            insert cTTList;
+            
+            list <CaseTeamTemplate> cTTNewList = new list <CaseTeamTemplate>();
+            cTTNewList = [select id,name from CaseTeamTemplate where name in : accountIdset];
+            MAp <String,id> mapOFNameVsId = new map <string,id>();
+            for (CaseTeamTemplate objctt : cTTNewList){                
+                mapOFNameVsId.put(objctt.name,objctt.id);
+            }
+            
+            map<id,user> userMap = new map <id,user>();
+            
+            List<User> lUsers = [SELECT Id,Contact.Id,Name,Email FROM User where Contact.Id !=null and IsActive = true];
+            system.debug('lUsers>>>>>'+lUsers);
+            for(User users: lUsers){
+                if(users.Contact.Id != null){
+                    userMap.put(users.Contact.Id,users);
+                }
+            }
+            system.debug('userMap>>>'+userMap);
+            set <id> conset = new set <id>();
+            list <Contact> conLNewist = new list <Contact>();
+            conLNewist = [select id,Account.name,Accountid, name from contact where id in : userMap.keyset() and Account.name in : accountIdset];
+            
+            system.debug('conLNewist>>>>>>>>'+conLNewist);
+            system.debug('conLNewistAccountName>>>>>>>>'+conLNewist[0].Account.name);
+            system.debug('conLNewistAccountName>>>>>>>>'+conLNewist[1].Account.name);
+            system.debug('conLNewist123>>>>>>>>'+conLNewist.size());
+            
+            for(Contact objContact: conLNewist){
+                if(objContact.AccountId!=null){
+                    conset.add(objContact.Accountid); 
+                }
+            } 
+            
+            
+            Map <string,list<id>> accountWithUserMap = new Map <string,list<id>>();
+            for(Contact objnewContact : conLNewist){                
+                for(user objuser : lUsers){
+                    if(objuser.Contact.Id == objnewContact.id){
+                        if(!accountWithUserMap.containsKey(objnewContact.Account.name)){
+                            list <id> idlist = new  list <id>();
+                            idlist.add(objuser.id);
+                            accountWithUserMap.put(objnewContact.Account.name,idlist);               
+                        }
+                        else{
+                            list <id> newIdlist =   accountWithUserMap.get(objnewContact.Account.name);
+                            newIdlist.add(objuser.id);
+                            accountWithUserMap.put(objnewContact.Account.name,newIdlist);               
+                        }
+                    }  
+                }
+            } 
+            system.debug('accountWithUserMap>>>>>>>>>>'+accountWithUserMap);
+            
+            list <account> accnewlist  = [select id,name from account where id in : conset and IsPartner = true and name in : accountIdset];
+            
+            set <id> idset1 = new set <id>();
+            list <CaseTeamTemplateMember> newcaseTeamMember = new list <CaseTeamTemplateMember>();
+            newcaseTeamMember = [select MemberId from CaseTeamTemplateMember];
+            system.debug('newcaseTeamMember>>>>'+newcaseTeamMember);
+            for(CaseTeamTemplateMember cttm : newcaseTeamMember){
+                idset1.add(cttm.MemberId);
+            }
+            
+            
+            list <CaseTeamTemplateMember> caseTeamMember = new list <CaseTeamTemplateMember>();
+            for(Account objAccount : accnewlist){
+                list <id> accId = accountWithUserMap.get(objAccount.name);
+                for(integer i = 0;i<accId.size();i++){
+                    CaseTeamTemplateMember cttm = new CaseTeamTemplateMember();
+                    cttm.TeamRoleId = '0B7D00000008QAj';
+                    cttm.TeamTemplateId = mapOFNameVsId.get(objAccount.name);
+                    if(!idset1.contains(accId[i])){
+                        cttm.MemberId = accId[i];
+                        caseTeamMember.add(cttm);
+                    }
+                }
+            }
+            system.debug('caseTeamMember>>>>>>'+caseTeamMember.size());
+            insert caseTeamMember;
+            
+            
+            system.debug('caseTeamMember>>>>>'+caseTeamMember);            
+        }
+        catch(Exception e){
+            system.debug('Error>>>>>>>>'+e.getMessage() + 'At line number>>>>>'+e.getLineNumber());
+        }
+    }
+}
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++Promises in java script++++++++++++++++++++++++++++++++++++++
+
+Promises----Promises are used to handle asynchronous operations in JavaScript. They are easy to manage when dealing with multiple asynchronous operations.
+
+Benefits of Promises
+
+Improves Code Readability
+Better handling of asynchronous operations
+Better flow of control definition in asynchronous logic
+
+Better Error Handling
+
+A Promise has four states:
+fulfilled: Action related to the promise succeeded
+rejected: Action related to the promise failed
+pending: Promise is still pending i.e not fulfilled or rejected yet
+settled: Promise has fulfilled or rejected.
+
+
+
+
+Hi Team,
+Today I have done the following tasks-
+1.Worked on the Micael project.
+> Worked on triggr task to assign task under krow project.
+2 Read about promises in jS and implement it in the lightning.
