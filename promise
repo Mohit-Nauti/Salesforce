@@ -1,0 +1,221 @@
+({
+    /**********************************************************/
+    //
+    //Description: 
+    //This Helper method use to retreive the all the Files of 
+    //the particular folderId and then Create the Metadata 
+    //for those files.
+    //
+    //INPUT:component,event,helper
+    /**********************************************************/
+    
+    getFolderItemsHelper : function(component, event, helper) {
+        try{
+            var boxAccessToken = 'Bearer RqtPkVLoVhMAtObU278CUnEnx1HnqMuw';
+            
+            //Here we hit the URL using following URL.
+            fetch('https://api.box.com/2.0/folders/97434766232/items', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': boxAccessToken
+                },
+            })
+            .then(response => response.text())
+            .then(function(result){
+                var listOfIds = [];
+                var resp = JSON.parse(result);
+                let i;
+                var filenameWithIndex = [];
+                
+                //Getting the file id and its name from the response.
+                
+                for(i =0; i<resp.entries.length; i++){
+                    if(resp.entries[i].type == 'file'){
+                        listOfIds.push(resp.entries[i].id); 
+                        filenameWithIndex[i]=resp.entries[i].name;
+                    }
+                }
+                component.set("v.allFileIds",listOfIds);
+                console.log(component.get("v.allFileIds"));
+                component.set("v.allfileNames",filenameWithIndex);
+                component.set("v.boxToken",boxAccessToken);                 
+                console.log(filenameWithIndex);
+            })
+            .catch(error =>console.log('error', error));
+        }        
+        catch(err){
+            console.log('error in createFolder_helper-->'+err.message);
+        }        
+    },
+    
+    /**********************************************************/
+    //
+    //Description: 
+    //This Helper method use to create the MetaData template
+    //with specified Fields. 
+    //
+    //INPUT:component,event,helper
+    /**********************************************************/
+    
+    createMetadataHelper: function(component, event, helper) {
+        try{
+            var accesstoken = component.get("v.boxToken");
+            var myPost = '{"scope":"enterprise","displayName":"keywords","fields":[{"type":"string","key":"LegalTerm","displayName":"Legal Term","Description":"Testing a Template","hidden":false}]}';
+            fetch('https://api.box.com/2.0/metadata_templates/schema', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': accesstoken
+                },
+                body: (myPost)
+            })
+            .then(response => response.text())
+            .then(function(result){
+                console.log(result);
+            })
+            .catch(error => console.log('error', error));
+        }        
+        catch(err){
+            console.log('error in createFolder_helper-->'+err.message);
+        }
+    },
+    
+    /**********************************************************/
+    //
+    //Description: 
+    //This Helper method use to retreive the MetaData Template
+    //INPUT:component,event,helper
+    /**********************************************************/
+    
+    getMetadataTemplateHelper : function(component, event, helper) {
+        try{
+            var accesstoken = component.get("v.boxToken");
+            fetch('https://api.box.com/2.0/metadata_templates/enterprise/keywords/schema', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': accesstoken
+                },
+            })
+            .then(response => response.text())
+            .then(function(result){                
+                var resp = JSON.parse(result);
+                console.log(resp);
+                component.set("v.templateKey",resp.templateKey);
+            })
+            .catch(error =>console.log('error', error));
+        }
+        catch(err){
+            console.log('error in createFolder_helper-->'+err.message);
+        }
+    },
+    
+    /**********************************************************/
+    //
+    //Description: 
+    //This Helper method use to Create the Metadata for the 
+    //file with the created metadata template and if the 
+    //MetaData is already created for the file ,it will Call 
+    //updateMetadataHelper method to updated the
+    //metadata of the file.
+    //
+    //INPUT:component,event,helper.
+    /**********************************************************/
+    
+    createOrUpdateFileMetadataHelper : function(component, event, helper) {
+        try{
+            var accesstoken = component.get("v.boxToken");
+            var itemInList = component.get("v.allFileIds");
+            var i;
+            var requestBody = '{"LegalTerm" : "1234"}';
+            var promises = [];
+            var listOfUrl = [];
+            itemInList.forEach(function(element) {
+                listOfUrl.push('https://api.box.com/2.0/files/'+element+'/metadata/enterprise/keywords');   
+                promises.push(
+                    fetch('https://api.box.com/2.0/files/'+element+'/metadata/enterprise/keywords', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': accesstoken
+                        },
+                        body: (requestBody)
+                    })
+                );
+            });
+            console.log(promises.length);
+            Promise.all(promises).then(function(response) {
+                console.log('---All created response---');
+                console.log(response);
+                var j;
+                var listOfIntegerWithIndex = [];
+                var error = [];
+                var listOfFileNames = component.get("v.allfileNames");
+                for(j=0;j<response.length;j++){
+                    let fileName = listOfFileNames[j];
+                    if(response[j].statusText=='Conflict'){
+                        listOfIntegerWithIndex.push(j);
+                    }
+                    else if (response[j].status !='201'){
+                        error.push({[fileName] : response[j].statusText});                        
+                    }
+                    if(j==response.length-1){
+                        helper.updateMetadataHelper(component, event, helper,listOfUrl,listOfIntegerWithIndex,error);
+                    }
+                }
+                console.log('======');
+                console.log(error);
+            });
+            
+        }catch(err){
+            console.log('error in createFolder_helper-->'+err.message);
+        }
+    },
+    
+    /**********************************************************/
+    //
+    //Description: 
+    //This Helper method use to update the metadata for the 
+    //file with the particular metadata.
+    //
+    //INPUT:component, event, helper,listOfUrl,listOfIntegerWithIndex,error
+    /**********************************************************/
+    
+    updateMetadataHelper : function(component, event, helper,listOfUrl,listOfIntegerWithIndex,error) {
+        try{
+            var accesstoken = component.get("v.boxToken");
+            console.log('--------->');        
+            var requestbody = "[{\"op\": \"add\",\"path\": \"/LegalTerm\",\"value\": \"updated legal term27\"}]";        
+            var p;
+            var promises = [];
+            for(p=0;p<listOfIntegerWithIndex.length;p++){
+                promises.push(    
+                    fetch(listOfUrl[listOfIntegerWithIndex[p]], {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json-patch+json',
+                            'Authorization': accesstoken
+                        },
+                        body: (requestbody)
+                    })
+                );
+            }
+            Promise.all(promises).then(function(response) {
+                console.log('----All updated response----');
+                console.log(response);
+                var k;
+                var allFilesName = component.get("v.allfileNames");
+                for(k=0;k<response.length;k++){
+                    if (response[k].status !='200'){
+                        let fileName = allFilesName[k];
+                        error.push({[fileName] : response[k].statusText});                    
+                    }
+                }
+                console.log(error);
+            });   
+        }catch(err){
+            console.log('error in createFolder_helper-->'+err.message);
+        }
+    }
+})

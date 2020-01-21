@@ -1,0 +1,232 @@
+++++++++++++++++++++++++++++++++++++++++++++GoogleAnalyticOAuth.VF++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+<apex:page controller="GoogleAnalyticsApi" > 
+      <apex:slds />
+    <apex:actionstatus id="statusCal">
+        <apex:facet name="start">
+            <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb; height:100%;opacity:0.65;width:100%;">
+                <div class="waitingHolder" style="top: 100px; width: 91px;">
+                    <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                    <span class="waitingDescription">Loading...</span>
+                </div>
+            </div>
+        </apex:facet>
+    </apex:actionstatus>
+      <apex:form id="theForm" > 
+          <apex:pageMessages ></apex:pageMessages>
+          <apex:pageBlock > 
+              <apex:commandButton action="{!authorization}" value="Connect with Calender"/> &nbsp; &nbsp;
+              <apex:commandButton action="{!doFetchAccessToken}" value="Get Access Toekn " status="statusCal"
+                                  reRender="theForm" /> &nbsp; &nbsp;
+              
+              <!-- <apex:commandButton action="{!dorefreshToken}" value="Do Refresh Toekn "/> -->
+              
+        </apex:pageBlock> 
+     </apex:form> 
+  </apex:page>
+  
+  +++++++++++++++++++++++++++++++++++++++++++++++++GoogleAnalyticsApi++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  
+  public class GoogleAnalyticsApi {
+    
+    public static Boolean isAccessToken { get; set; }
+    public static String googleoAuthUrl='https://accounts.google.com/o/oauth2/auth?'; 
+    // Your redirect URI here that you entered while creating the App in Google API console
+    public static String redirect_uri = 'https://wharton--gram--c.cs34.visual.force.com/apex/GoogleAnalyticoAuth'; 
+    
+    public static String analytic_Scope = 'https://www.googleapis.com/auth/analytics.readonly'; 
+    
+    /* If you want to use Google Analytics OR any Other API then You just need to change the Scope 
+According to API and every thing will be same. OR you can create a new custom one for each API 
+so that it will be easy to maintain the access token and refresh token
+*/
+    //public static String analytics_Scope = 'https://www.googleapis.com/auth/analytics';
+    
+    
+    /* Constructor */
+    public GoogleAnalyticsApi(){
+        
+    }
+    
+    public PageReference authorization(){
+        
+        List<GoogleAnalyticAuthInfo__c> googleSettingInfoList = new List<GoogleAnalyticAuthInfo__c>();
+        googleSettingInfoList = GoogleAnalyticAuthInfo__c.getAll().values();
+        String consumerKey = googleSettingInfoList[0].ClientId__c;
+        String clientSecret = googleSettingInfoList[0].	ClientSecret__c;
+        
+        String request_Body = googleoAuthUrl+'redirect_uri='+redirect_uri+'&response_type=code&client_id='+consumerKey+
+            '&scope='+analytic_Scope+'&prompt=consent&access_type=offline&include_granted_scopes=true';
+        
+        /*
+String body = googleoAuthUrl+'redirect_uri='+redirect_uri+'&response_type=code&client_id='+consumerKey +
+'&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcalendar&approval_prompt=force&access_type=offline';
+*/
+        
+        PageReference pr = new PageReference(request_Body); 
+        return pr;
+    }
+    
+    public static PageReference doFetchAccessToken(){ 
+        
+        List<GoogleAnalyticAuthInfo__c> googleSettingInfoList = new List<GoogleAnalyticAuthInfo__c>();
+        googleSettingInfoList = GoogleAnalyticAuthInfo__c.getAll().values();
+        String consumerKey = googleSettingInfoList[0].ClientId__c;
+        String clientSecret = googleSettingInfoList[0].	ClientSecret__c;
+        
+        String authCode = ApexPages.currentPage().getParameters().get('code');
+        system.debug('authCode---'+authCode);
+        String errorMessage = '';
+        
+        String endPoint = 'https://www.googleapis.com/oauth2/v4/token';
+        String authTokenBody = authCode;
+        
+        String requestTokenBody = 'code='+authCode+'&client_id='+consumerKey+'&client_secret='+
+            clientSecret+'&redirect_uri='+redirect_uri+
+            '&grant_type=authorization_code';
+        
+        Http http = new Http();
+        httpRequest httpReq = new httpRequest();
+        HttpResponse response = new HttpResponse();
+        httpReq.setEndPoint(endPoint);
+        httpReq.setBody(requestTokenBody);
+        httpReq.setMethod('POST');
+        try{
+            response = http.send(httpReq);
+            if(response.getStatuscode()==200){
+                PageReference pageRef = new PageReference('/apex/GoogleAnalyticActions');
+                pageRef.setRedirect(true);
+                Map<String,object> TokenInfo = (Map<String,object>)JSON.deserializeUntyped(response.getBody());
+                System.debug('#### TokenInfo '+TokenInfo);
+                List<GoogleAnalyticAuthInfo__c> googleAnalyticAuthInfoList = new List<GoogleAnalyticAuthInfo__c>();
+                googleAnalyticAuthInfoList = GoogleAnalyticAuthInfo__c.getAll().values();
+                
+                if(googleAnalyticAuthInfoList.size() > 0 ){
+                    
+                    GoogleAnalyticAuthInfo__c googleSettingInfo = googleAnalyticAuthInfoList[0];
+                    googleSettingInfo.Access_Token__c = String.valueOf(TokenInfo.get('access_token'));
+                    googleSettingInfo.Refresh_Token__c = String.valueOf(TokenInfo.get('refresh_token'));
+                    
+                    update new List<GoogleAnalyticAuthInfo__c>{googleSettingInfo};
+                        }else{
+                            
+                            GoogleAnalyticAuthInfo__c googleSettingInfo = new GoogleAnalyticAuthInfo__c();
+                            googleSettingInfo.Name = 'Google AuthInfo';
+                            googleSettingInfo.Access_Token__c = String.valueOf(TokenInfo.get('access_token'));
+                            googleSettingInfo.Refresh_Token__c = String.valueOf(TokenInfo.get('refresh_token'));
+                            system.debug('googleSettingInfo------'+googleSettingInfo);
+                            insert new List<GoogleAnalyticAuthInfo__c>{googleSettingInfo};
+                                system.debug('googleSettingInfo-------'+googleSettingInfo);
+                        }
+                return pageRef;
+            }else{
+                errorMessage = 'Unexpected Error while communicating with Google Calendar API. '
+                    +'Status '+response.getStatus()+' and Status Code '+response.getStatuscode();
+                return null;
+            }     
+        }catch(System.Exception e){
+            if(String.valueOf(e.getMessage()).startsWith('Unauthorized endpoint')){
+                errorMessage = 'Unauthorize endpoint: An Administer must go to Setup -> Administer -> Security Control ->'
+                    +' Remote Site Setting and add '+' '+ endPoint +' Endpoint';
+                return null;
+            }else{
+                errorMessage = 'Unexpected Error while communicating with Google Calendar API. '
+                    +'Status '+response.getStatus()+' and Status Code '+response.getStatuscode();
+                return null;
+            }
+        }  
+        //  return null;
+    }
+    
+    public static string doRefreshToken(){
+        List<GoogleAnalyticAuthInfo__c> googleSettingInfoList = new List<GoogleAnalyticAuthInfo__c>();
+        googleSettingInfoList = GoogleAnalyticAuthInfo__c.getAll().values();
+        String consumerKey = googleSettingInfoList[0].ClientId__c;
+        String clientSecret = googleSettingInfoList[0].	ClientSecret__c;
+        string accessToken = '';
+        String errorMessage ='';
+        
+        Http http = new Http();
+        HttpRequest httpReq = new HttpRequest();
+        HttpResponse httpRes = new HttpResponse();
+        httpReq.setEndpoint('https://www.googleapis.com/oauth2/v4/token');
+        httpReq.setMethod('POST');
+        httpReq.setHeader('Content-Type', 'application/x-www-form-urlencoded');
+        
+        //  List<GoogleAnalyticAuthInfo__c> googleSettingInfoList = new List<GoogleAnalyticAuthInfo__c>();
+        // googleSettingInfoList = GoogleAnalyticAuthInfo__c.getAll().values();
+        String refreshToken;
+        if(googleSettingInfoList.size() > 0 )
+            refreshToken = googleSettingInfoList[0].Refresh_Token__c;
+        
+        System.debug('#### refreshToken '+refreshToken);
+        String refreshTokenBody = 'client_id='+consumerKey+'&client_secret='+clientSecret+'&refresh_token='+refreshToken
+            +'&grant_type=refresh_token';
+        System.debug('#### refreshTokenBody '+refreshTokenBody);
+        
+        httpReq.setBody(refreshTokenBody);
+        
+        try{
+            httpRes = http.send(httpReq); 
+            system.debug('>>>token>>'+httpRes.getStatusCode());
+            if(httpRes.getStatusCode() == 200){
+                Map<String,object> TokenInfo = (Map<String,object>)JSON.deserializeUntyped(httpRes.getBody());
+                system.debug('TokenInfo>>>>>'+TokenInfo);
+                GoogleAnalyticAuthInfo__c googleSettingInfo = googleSettingInfoList[0];
+                googleSettingInfo.Access_Token__c = String.valueOf(TokenInfo.get('access_token'));
+                //   googleSettingInfo.Refresh_Token__c = String.valueOf(TokenInfo.get('refresh_token'));
+                System.debug('do Refresh Token '+googleSettingInfo);
+                update new List<GoogleAnalyticAuthInfo__c>{googleSettingInfo};
+                    system.debug('googleSettingInfo>>>>>>'+googleSettingInfo);
+                return String.valueOf(TokenInfo.get('access_token'));
+            }else{
+                errorMessage = 'Unexpected Error while communicating with Google Calendar API. '
+                    +'Status '+httpRes.getStatus()+' and Status Code '+httpRes.getStatuscode();
+                return errorMessage;
+            }
+        }catch(System.Exception e){
+            
+            System.debug('#### Exception Executed '+e.getStackTraceString() + ' '+e.getMessage());
+            if(String.valueOf(e.getMessage()).startsWith('Unauthorized endpoint')){
+                errorMessage = 'Unauthorize endpoint: An Administer must go to Setup -> Administer -> Security Control ->'
+                    +' Remote Site Setting and add '+' '+ 'https://www.googleapis.com/oauth2/v4/token' +' Endpoint';                
+            }else{
+                errorMessage = 'Unexpected Error while communicating with Google Calendar API. '
+                    +'Status '+httpRes.getStatus()+' and Status Code '+httpRes.getStatuscode();
+            }
+            return errorMessage;
+        }
+    }
+}.
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++GAAuthpage+++++++++++++++++++++++++++++++++++++++++++++
+
+<apex:page controller="GoogleAnalyticsApi" > 
+      <apex:slds />
+    <apex:actionstatus id="statusCal">
+        <apex:facet name="start">
+            <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb; height:100%;opacity:0.65;width:100%;">
+                <div class="waitingHolder" style="top: 100px; width: 91px;">
+                    <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                    <span class="waitingDescription">Loading...</span>
+                </div>
+            </div>
+        </apex:facet>
+    </apex:actionstatus>
+      <apex:form id="theForm" > 
+          <apex:pageMessages ></apex:pageMessages>
+          <apex:pageBlock > 
+              <apex:commandButton action="{!authorization}" value="Authorize your google Account"/> &nbsp; &nbsp;
+              <apex:commandButton action="{!doFetchAccessToken}" value="Get Access Toekn " status="statusCal"
+                                  reRender="theForm" /> &nbsp; &nbsp;
+              
+              <!-- <apex:commandButton action="{!dorefreshToken}" value="Do Refresh Toekn "/> -->
+              
+        </apex:pageBlock> 
+     </apex:form> 
+  </apex:page>
+  
+  +++++++++++++++++++++++++++++++++++++++++++++++GoogleAnalyticActions.vf++++++++++++++++++++++++++++++
+  <apex:page >
+    <apex:slds />
+    <b>Your Access Token is updated..</b>
+</apex:page>
