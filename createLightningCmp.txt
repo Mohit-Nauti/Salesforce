@@ -1,0 +1,732 @@
+//Parent cmp
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId" access="global">
+    
+    <aura:attribute name="clickedButtonName" type="String" default="none"/>
+    <aura:attribute  name="recordId" type="Id" default=""/>
+    
+    <div class="slds-m-around_xx-large" >
+        
+        <div style = "background-color:blue;height:40px">
+            
+            <div style = "float:right;margin-top: 4px;margin-right:4px;">
+                
+                <lightning:button variant="neutral"
+                                  label="Finalize"
+                                  title="Finalize"
+                                  onclick="{!c.finalizeButtonController}"
+                                  />
+                <lightning:button variant="neutral"
+                                  label="Publish"
+                                  title="Publish"
+                                  onclick="{!c.publishButtonController}"/>
+            </div>
+        </div>
+        
+        <!--Finalize Button Clicked -->
+        <aura:if isTrue="{!v.clickedButtonName=='finalizeButton'}">
+            <c:FinalizeButtonCmp serviceID="{!v.recordId}" clickedButtonName="{!v.clickedButtonName}"/>
+        </aura:if>
+        
+        <!--Publish Button Clicked -->
+        <aura:if isTrue="{!v.clickedButtonName=='publishButton'}">
+            <c:PublishButtonCmp serviceID="{!v.recordId}" clickedButtonName="{!v.clickedButtonName}"/>
+        </aura:if>
+    </div>
+</aura:component>
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+//parent helper
+
+({
+    finalizeButtonController: function(component,event,helper){
+       component.set("v.clickedButtonName",'finalizeButton');
+    },
+   publishButtonController: function(component,event,helper){
+       component.set("v.clickedButtonName",'publishButton');
+      },
+    
+})
+
+//Child 1
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" controller="ServiceContentController1" access="global" >
+    
+    <aura:handler name="init" value="{!this}" action="{!c.retriveFinalFolderItemsController}"/>
+    
+    
+    <aura:attribute name="selectedFileForPublishId" type="String" default=""/>
+    <aura:attribute name="publishFolderId" type="String" default="101748365452"/>
+    <aura:attribute name="fileId" type="String" default=""/>  <!-- fileId -->
+    <aura:attribute name="finalFolderItems" type="Object" access="global"/> 
+    <aura:attribute name="isPublishClicked" type="boolean" default="false"/>
+    <aura:attribute name="serviceID" type="String" default=""/> 
+    <aura:attribute name="recordName" type="String" default=""/> 
+    <aura:attribute name="clickedButtonName" type="String" /> 
+    
+    <!-- show final folder items the publish button click -->
+    <aura:if isTrue="{!v.isPublishClicked}">
+        <div class="slds-box">
+            <div>
+                <span style = "cursor : pointer;">{!v.recordName} > Final</span>
+            </div>
+            
+            <div aura:id="folder_list" class="slds-scrollable_y" style="height:150px;">
+                <table class="slds-table slds-table--bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col"><span class="slds-truncate">Name</span></th>
+                            <th scope="col"><span class="slds-truncate">Select</span></th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        
+                        <aura:iteration items="{!v.finalFolderItems}" var="files" indexVar="ind">
+                            <tr>
+                                <td>{!files.name}</td>
+                                <td>
+                                    <ui:inputRadio text="{!files.id}" label="" name="oth"  change="{!c.selectedValue}"/>
+                                </td>
+                            </tr>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+                
+            </div>
+            
+            <br></br>        
+        <div style = "padding-left:800px;">
+            
+            
+            <!-- Publish Button -->
+            <lightning:button variant="brand-outline" 
+                              label="Publish" 
+                              onclick="{!c.copyFileToPublishFolderController}"/>
+            
+            <!-- Cancel Button -->
+            <lightning:button variant="brand-outline" 
+                              label="Cancel"
+                               onclick="{!c.Cancel}"
+                              />
+            
+        </div>
+        </div>
+        
+    </aura:if>
+    
+</aura:component>
+
+//child 1 controller
+
+({
+    //Description : retriveFinalFolderItemsController use to call
+    //helper method
+    //INPUT:component,event,helper
+    retriveFinalFolderItemsController :function(component,event,helper)
+    {
+        helper.retriveFinalFolderItemsHelper(component,event,helper);
+    },
+    
+    //Description : copyFileToPublishFolder use to call
+    //helper method
+    //INPUT:component,event,helper
+    
+    copyFileToPublishFolderController :function(component,event,helper)
+    {
+        helper.copyFileToPublishFolderHelper(component,event,helper);
+    },
+    
+    //Description : selectedValue method use to set the
+    //selected fileId to the attribute.
+    //INPUT:component,event,helper
+    selectedValue : function(component,event,helper)
+    {
+        var fileId=event.getSource().get("v.text");
+        component.set("v.fileId",fileId);
+        
+        console.log('fileId::'+fileId);
+    },
+     Cancel :function(component,event,helper){
+        component.set("v.clickedButtonName",'none');
+    }
+    
+})
+
+//child 1 helper
+
+({
+    //Description : This Method use to hit the apex controller
+    //to get the final folder items.
+    //INPUT:component,event,helper
+    retriveFinalFolderItemsHelper :function(component,event,helper)
+    {
+        //Retrieving the final folder id from the json response
+        var serviceID=component.get("v.serviceID");
+        
+        var action=component.get("c.getFolders");
+        
+        action.setParams({
+            "serviceID":serviceID
+        });
+        
+        //callback method after the apex controller execute
+        action.setCallback(this,function(res){
+            
+            if(res.getState()==='SUCCESS')
+            {
+                console.log('success');
+                var resp=res.getReturnValue();
+                
+                component.set("v.recordName",resp.serviceName);
+                
+                var responseList=resp.folderInformationList;
+                
+                var finalObj;
+                //Getting the final folder Object
+                for(var i=0;i<responseList.length;i++)
+                {
+                    var responseListObj=responseList[i];
+                    if(responseListObj.name.toLowerCase()=='Final'.toLowerCase())
+                    {
+                        finalObj=responseListObj;
+                    }
+                }
+                
+                var entriesList=finalObj.item_collection.entries;
+                
+                console.log("entriesList::::"+entriesList);
+                //Setting the items in list
+                component.set("v.finalFolderItems",entriesList);
+                component.set("v.isPublishClicked",true);
+            }
+            if(res.getState()==='INCOMPLETE')
+            {
+                console.log('INCOMPLETE');
+            }
+            if(res.getState()==='ERROR')
+            {
+                console.log('ERROR');
+            }
+        });
+        
+        $A.enqueueAction(action);
+    },
+    
+    //Description : This Method use to move the file from final
+    //folder to publish folder.
+    //INPUT:component,event,helper
+    copyFileToPublishFolderHelper :function(component,event,helper)
+    {
+        var fileId=component.get("v.fileId");
+        var folderId=component.get("v.publishFolderId");
+        
+        var action=component.get("c.copyFileToPublishFolder");
+        action.setParams({
+            "fileId":fileId,
+            "folderId":folderId
+        });
+        
+        //callback method after the apex controller execute
+        action.setCallback(this,function(res)
+                           {
+                               if(res.getState()==='SUCCESS')
+                               {
+                                   console.log('success');
+                                   console.log('response of copy:::'+res.getReturnValue());
+                                   
+                                   //Calling final folder method to hit again to get final folder items
+                                   helper.retriveFinalFolderItemsHelper(component,event,helper);
+                               }
+                               if(res.getState()==='INCOMPLETE')
+                               {
+                                   console.log('INCOMPLETE');
+                               }
+                               if(res.getState()==='ERROR')
+                               {
+                                   console.log('ERROR');
+                               }
+                           });
+        
+        $A.enqueueAction(action);
+    }
+})
+
+
+//Child 2 cmp 
+
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" Controller="ServiceContentController1" access="global" >
+    
+    <aura:handler name="init" value="{!this}" action="{!c.getFolderInfo}"/>
+    
+    <aura:attribute name="serviceID" type="Id"/>
+    <aura:attribute name="folderItems" type="Object[]"  access="global"/>
+    <aura:attribute name="filesList" type="Object"  access="global"/>
+    <aura:attribute name="idsList" type="List"  access="global"/>
+    <aura:attribute name="fileid" type="string" />
+    <aura:attribute name="isModalOpen" type="boolean" default="false"/>
+    <aura:attribute name="recordName" type="string" />
+    <aura:attribute name="folderid" type="String" default="" />
+    <aura:attribute name="folderIndex" type="String" />
+    <aura:attribute name="selectedFolderName" type="String" default="" />
+    <aura:attribute name="isFinalizeClicked" type="boolean" default="false"/>
+    <aura:attribute name="clickedButtonName" type="String" />
+    
+    
+    <aura:if isTrue="{!v.isFinalizeClicked}">
+        <div class="slds-box">
+            <!--Service Record Name -->
+            <div onclick="{!c.onRecordClick}" style = "padding-bottom:7px">
+                <span style = "cursor : pointer;">{!v.recordName}</span>  <aura:if isTrue="{!v.selectedFolderName !=''}"> > {!v.selectedFolderName}</aura:if>
+            </div>
+            
+            
+            <!-- box folder for service record -->
+            <div aura:id="folder_list" class="slds-scrollable_y" style="height:150px;">
+                <table class="slds-table slds-table--bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col"><span class="slds-truncate">Name</span></th>
+                            <th scope="col"><span class="slds-truncate">Updated</span></th>
+                            <th scope="col"><span class="slds-truncate">Size</span></th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        
+                        <aura:iteration items="{!v.folderItems}" var="folders" indexVar="item">
+                            <tr>
+                                <td style = "cursor : pointer" onclick="{!c.getFolderId}" id="{!folders.id + '--'+item}">
+                                    {!folders.name} 
+                                </td>
+                                <td>{!folders.modified_at} &nbsp; {!folders.modified_by.name}</td>
+                                <td>{!folders.item_collection.total_count}</td>
+                            </tr>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+            </div>
+            
+            
+            
+            <!--table to show files inside the folder-->
+            <div aura:id="files_list"  class="toggle slds-scrollable" style="height:150px;">
+                <table class="slds-table slds-table--bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col"><span class="slds-truncate">Name</span></th>
+                            <th scope="col"><span class="slds-truncate">Updated</span></th>
+                            <th scope="col"><span class="slds-truncate">Size</span></th>
+                            <th scope="col"><span class="slds-truncate">Select</span></th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        
+                        <aura:iteration items="{!v.filesList}" var="file">
+                            <tr>
+                                <td>{!file.name}</td>
+                                 <td></td>
+                                <td></td>
+                                <td>
+                                    <ui:inputRadio  name = "select" text = "{!file.id}"  label="" change="{!c.onRadio}" />
+                                </td>
+                            </tr>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+            </div>
+            
+            <br></br> 
+            <div style = "padding-left:800px;">
+                <lightning:button variant="neutral"
+                                  label="Finalize"
+                                  title="Finalize"
+                                  onclick="{! c.Finalize }"
+                                  />
+                <lightning:button variant="neutral"
+                                  label="Cancel"
+                                  title="Cancel"
+                                  onclick="{!c.cancel}"/>
+            </div>   
+            
+        </div>
+    </aura:if>
+</aura:component>
+
+//child 2 cmp
+
+({
+    //Calls apex controller 'getFoldersData' to fetch folders info
+    getFolderInfo : function(component, event, helper) {
+        helper.getMetadataTemplateHelper(component, event, helper);
+        
+    },
+    Finalize: function(component, event, helper) {
+        
+        helper.finalizeFile(component, event, helper);
+    },
+    
+    getFolderId : function(component, event, helper) {
+        // helper.getFileFromFolder(component, event, helper);
+        console.log('getFolderId-->'+event.currentTarget.id);
+        let folderIndex = event.currentTarget.id.split("--")[1];
+        component.set('v.folderIndex',folderIndex);
+        // alert(folderIndex);
+        helper.getUpdatedEntriesList(component, event, helper,folderIndex);
+        let selectedFolderName = component.get('v.folderItems')[folderIndex].name;
+        //console.log(entrieslist);
+        component.set('v.selectedFolderName',selectedFolderName);
+        
+        let folderDiv = component.find("folder_list");
+        $A.util.toggleClass(folderDiv, "toggle");
+        let fileDiv = component.find("files_list");
+        $A.util.toggleClass(fileDiv, "toggle");
+        
+    },
+    onRadio  : function(component, event, helper) {
+        var fileids = (event.getSource().get("v.text"));
+        //alert(fileids);
+        component.set("V.fileid",fileids);
+        // helper.finalize(component, event, helper);
+    },
+    onRecordClick :function(component, event, helper) {
+        let folderDiv = component.find("folder_list");
+        $A.util.toggleClass(folderDiv, "toggle");
+        let fileDiv = component.find("files_list");
+        $A.util.toggleClass(fileDiv, "toggle");
+    },
+    cancel :function(component,event,helper){
+        component.set("v.clickedButtonName",'none');
+    }
+    
+})
+
+//child 2 helper
+
+({
+    getMetadataTemplateHelper : function(component, event, helper) {
+        var serviceID = component.get("v.recordId");
+        var action = component.get("c.getFolders");
+        action.setParams({
+            "serviceID" : serviceID
+        });
+        action.setCallback(this,function(res){
+            if(res.getState()==="SUCCESS"){
+                
+                console.log('Success');
+                
+                var resp = res.getReturnValue();
+                
+                //setting the all folderList wrapper for service record List 
+                component.set("v.folderItems",resp.folderInformationList);
+                
+                console.log("response:::"+JSON.stringify(resp));
+                
+                component.set("v.recordName",resp.serviceName);
+                
+                console.log('responseList::'+JSON.stringify(resp.folderInformationList));
+                
+                console.log('size::'+resp.folderInformationList.length);
+                
+                var finalFolderId="";
+                for(let i = 0; i<resp.folderInformationList.length; i++){
+                    
+                    var folderObj=resp.folderInformationList[i];
+                    
+                    if(folderObj.name.toLowerCase()=='final'.toLowerCase())
+                    {
+                        finalFolderId= folderObj.id; 
+                        console.log('folderId::'+finalFolderId);
+                    }
+                    
+                }
+                component.set("v.folderid",finalFolderId);
+                if(component.get('v.folderIndex') !=undefined){
+                    helper.getUpdatedEntriesList(component ,event , helper ,component.get('v.folderIndex'));
+                }
+                
+                //showing all folder after getting from apex hit and setting 
+                //into the list
+                component.set("v.isFinalizeClicked",true);
+                
+            }
+            if(res.getState()==='INCOMPLETE')
+            {
+                console.log('INCOMPLETE ');
+            }
+            if(res.getState()=='ERROR')
+            {
+                console.log('ERROR');
+            }
+        })
+        $A.enqueueAction(action);
+    },
+    finalizeFile : function(component, event, helper){
+        
+        var file_id = component.get("v.fileid");
+        var folderID = component.get("v.folderid");
+        var action = component.get("c.FinalizeFiledata");
+        
+        action.setParams({
+            "filesId" : file_id,
+            "folderId" : folderID
+        });
+        
+        action.setCallback(this,function(res){
+            
+            if(res.getState()==="SUCCESS"){
+                
+                console.log('SUCCESS for finalize the file ');
+                
+                //Calling getMetadataTemplateHelper helper to again refresh the finalize 
+                //page , after publishing a file.
+                
+                helper.getMetadataTemplateHelper(component,event,helper);
+            }
+            
+            if(res.getState()==='INCOMPLETE')
+            {
+                console.log('INCOMPLETE ');
+            }
+            if(res.getState()=='ERROR')
+            {
+                console.log('ERROR');
+            }
+        })
+        $A.enqueueAction(action);
+    },
+    
+    getUpdatedEntriesList : function(component,event,helper,folderIndex){
+        let entrieslist = component.get('v.folderItems')[folderIndex].item_collection.entries;
+        component.set('v.filesList',entrieslist);
+    }
+    
+})
+
+//controller same for all cmp
+
+public class ServiceContentController1 {
+    @AuraEnabled
+    public static WrapperOFFolderDataRecordInfo getFolders(string serviceID){
+        try{
+            WrapperOFFolderDataRecordInfo WrapperOFFolderDataRecordInfoObj = new WrapperOFFolderDataRecordInfo();
+            WrapperOFFolderDataRecordInfoObj.serviceName = 'Service Record';
+            list <service__c> serviceList = new list <service__c>();
+            serviceList = [select name from service__c where id =: serviceID];
+            
+            System.debug('**************getFolders');
+            Http http = new Http();
+            HttpRequest request = new HttpRequest();
+            request.setEndpoint('https://api.box.com/2.0/folders/101739073282/items');
+            request.setMethod('GET');
+            request.setHeader('Content-Type', 'application/json');
+            request.setHeader('Authorization', 'Bearer 9scHQLBqexpRvEiorD8IhH4nhTVPQ5Eb');
+            // Set the body as a JSON object
+            HttpResponse response = http.send(request);
+            // Parse the JSON response
+            system.debug(response.getStatusCode());
+            if (response.getStatusCode() != 200) {
+                System.debug('The status code returned was not expected: ' +
+                             response.getStatusCode() + ' ' + response.getStatus());
+            } else {
+                System.debug(response.getBody());
+            }
+            
+            String jsonResponse = response.getBody();
+            Map<String,object> responseMap = (Map<String,object>)JSON.deserializeUntyped(jsonResponse);        
+            WrapperOFFolderData objWrapperOFFolderData = new WrapperOFFolderData();
+            objWrapperOFFolderData.entries =(List<Object>)responseMap.get('entries');
+            system.debug('objWrapperOFFolderData--------'+objWrapperOFFolderData.entries);
+            List<String> folderIds = new List<String>();
+            for(Object obj : objWrapperOFFolderData.entries){
+                //System.debug('obj-->'+obj.id);
+                Map<String,Object> jsonToOnitMap = (Map<String,Object>)obj;
+                System.debug('jsonToOnitMap-->'+jsonToOnitMap);
+                folderIds.add(String.valueOf(jsonToOnitMap.get('id')));
+            }
+            System.debug('folderIds-->'+folderIds);
+            //iterate over foldr Ids to fetch the information
+            List<FolderInformation> folderInfoList = new List<FolderInformation>();
+            for(String folderId :folderIds){
+                FolderInformation folderInfo = new FolderInformation();
+                folderInfo = getFoldersInformation(folderId);
+                folderInfoList.add(folderInfo);
+            }
+            System.debug('folderInfoList-->'+folderInfoList);
+            WrapperOFFolderDataRecordInfoObj.FolderInformationList = folderInfoList;
+            return WrapperOFFolderDataRecordInfoObj;
+            //getFoldersInformation(folderIds);
+            //return objWrapperOFFolderData;
+        }catch(Exception e){
+            system.debug('Error------->'+e.getMessage()+'at line number------->'+e.getLineNumber());
+            return null;
+        }    
+        
+        
+    }
+
+    public static FolderInformation getFoldersInformation(String folderid){       
+        try{
+           // for(id objID : idslist){
+                Http http = new Http();
+                HttpRequest request = new HttpRequest();
+                request.setEndpoint('https://api.box.com/2.0/folders/'+folderid);
+                request.setMethod('GET');
+                request.setHeader('Content-Type', 'application/json');
+                request.setHeader('Authorization', 'Bearer 9scHQLBqexpRvEiorD8IhH4nhTVPQ5Eb');
+                // Set the body as a JSON object
+                HttpResponse response = http.send(request);
+                // Parse the JSON response
+                system.debug(response.getStatusCode());
+                if (response.getStatusCode() != 200) {
+                    System.debug('The status code returned was not expected: ' +
+                                 response.getStatusCode() + ' ' + response.getStatus());
+                } else {
+                    System.debug(response.getBody());
+                }
+                
+            String jsonResponse = response.getBody();
+            FolderInformation folderInfo = new FolderInformation();
+            folderInfo = (FolderInformation) System.JSON.deserialize(jsonResponse, FolderInformation.class);
+            System.debug('folderInfo--->'+folderInfo);
+            return folderInfo;
+                //Map<String,object> responseMap = (Map<String,object>)JSON.deserializeUntyped(jsonResponse);        
+            }catch(Exception e){
+                system.debug('Error------->'+e.getMessage()+'at line number------->'+e.getLineNumber());
+                return null;
+            }    
+            
+            
+        }
+    
+    @AuraEnabled
+    public static void FinalizeFiledata(string filesId,string folderId ){  
+        try
+        {
+            System.debug('filesId::'+filesId);      
+            System.debug('filesId::'+filesId);
+            
+            if(filesId!='' && filesId!='')
+            {
+                String accessToken='9scHQLBqexpRvEiorD8IhH4nhTVPQ5Eb';
+                String authorization='Bearer '+accessToken;
+                
+                String endPoint='https://api.box.com/2.0/files/'+filesId;
+                String requestBody='{"parent":{"id":"'+folderId+'"}}';
+                
+                System.debug('requestBody:::'+requestBody);
+                
+                Http http=new Http();
+                HttpRequest request=new HttpRequest();
+                
+                request.setHeader('Authorization', authorization);
+                request.setHeader('Content-Type', 'application/json');
+                request.setBody(requestBody);
+                request.setEndpoint(endPoint);
+                
+                request.setMethod('PUT');
+                
+                HttpResponse response=http.send(request);
+                
+                if(response.getStatusCode()==200)
+                {
+                    System.debug('response::'+response.getBody());
+                }
+                
+            }
+            
+            
+        }
+        catch(exception ex){
+            System.debug('Error in::'+ex.getLineNumber()+' and Error is:::'+ex.getMessage());
+        }
+    }
+    
+    
+    // Description:
+    // Use to publish the file from final folder to 
+    // publish folder.
+    // 
+    // Param: fileId - selected file Id from final folder
+    @AuraEnabled(continuation=true)
+    public static String copyFileToPublishFolder(String fileId,String folderId){
+        
+        String returnBody='';
+        try
+        {
+            System.debug('fileId::'+fileId);
+            System.debug('folderId::'+folderId);
+            
+            if(fileId!='' && folderid!='')
+            {
+                String accessToken='9scHQLBqexpRvEiorD8IhH4nhTVPQ5Eb';
+                String authorization='Bearer '+accessToken;
+                
+                String endPoint='https://api.box.com/2.0/files/'+fileId;
+                String requestBody='{"parent":{"id":"'+folderId+'"}}';
+                
+                System.debug('requestBody:::'+requestBody);
+                
+                Http http=new Http();
+                HttpRequest request=new HttpRequest();
+                
+                request.setHeader('Authorization', authorization);
+                request.setHeader('Content-Type', 'application/json');
+                request.setBody(requestBody);
+                request.setEndpoint(endPoint);
+                
+                request.setMethod('PUT');
+                
+                HttpResponse response=http.send(request);
+                
+                if(response.getStatusCode()==200)
+                {
+                    System.debug('response::'+response.getBody());
+                    returnBody=response.getBody();
+                }
+                
+            }
+            
+            
+        }
+        catch(exception ex){
+            System.debug('Error in::'+ex.getLineNumber()+' and Error is:::'+ex.getMessage());
+        }
+        
+        return returnBody;
+    }
+    
+    
+    public class WrapperOFFolderData{
+        @AuraEnabled public Integer total_count;	//6
+        @AuraEnabled public list <object> entries;
+    }
+    public class WrapperOFFolderDataRecordInfo{
+     @AuraEnabled public string serviceName;
+     @AuraEnabled public list<FolderInformation> folderInformationList;
+
+    }
+    public class FolderInformation{
+        @AuraEnabled public String type;	//folder
+        @AuraEnabled public String id;	//101748365452
+        @AuraEnabled public String name;
+        @AuraEnabled public string modified_at;
+        @AuraEnabled public item_collectionCls item_collection;
+        @AuraEnabled public Modified_ByInfocls modified_by;
+    }
+    public class item_collectionCls{
+        @AuraEnabled public integer total_count;
+        @AuraEnabled public List<EntryList> entries;
+        
+    }
+    public class EntryList{
+        @AuraEnabled public String type;
+        @AuraEnabled public String id;
+        @AuraEnabled public String name;
+        
+    }
+    public class Modified_ByInfocls{
+        @AuraEnabled public String name;
+    }
+}
+
