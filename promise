@@ -13,6 +13,7 @@
         try{
             var boxAccessToken = 'Bearer RqtPkVLoVhMAtObU278CUnEnx1HnqMuw';
             
+
             //Here we hit the URL using following URL.
             fetch('https://api.box.com/2.0/folders/97434766232/items', {
                 method: 'GET',
