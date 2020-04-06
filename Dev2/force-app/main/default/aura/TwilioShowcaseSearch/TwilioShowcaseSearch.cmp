@@ -1,0 +1,30 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global">
+
+    <!-- Attributes -->
+    <aura:attribute name="tabName" type="string" />
+    <aura:attribute name="searchTerm" type="string" />
+    <aura:attribute name="searchDisabled" type="boolean" default="true" />
+    <!-- Events -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:registerEvent name="evt_SearchSubmitted" type="c:evt_SearchSubmitted"/>
+    <aura:registerEvent name="evt_ClearListingFilters" type="c:evt_ClearListingFilters"/>
+    <!-- Handlers -->
+    <aura:handler name="change" value="{!v.searchTerm}" action="{!c.searchTermChanged}"/>
+
+    <div>
+        <div id="search-wrapper">
+            <div class="slds-form-element">
+                <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
+                    <lightning:icon iconName="utility:search" size="small" alternativeText="Search image" class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default" />
+                    <span onkeypress="{!c.keyCheck}">
+                    <lightning:input type="text" value="{!v.searchTerm}" placeholder="Find a partner listing"  name="inputText" onchange="{!c.searchTermChanged}"/>
+                    </span>
+                        <lightning:icon aura:id="clearSearch" iconName="utility:clear" size="x-small" class="slds-icon clear-search slds-hide" onclick="{!c.clearSearch}"/>
+                </div>
+            </div>
+             <lightning:button variant="brand" label="Search" title="Search" onclick="{!c.searchListings}" />
+           
+        </div>        
+    </div>
+
+</aura:component>

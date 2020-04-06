@@ -1,0 +1,162 @@
+.THIS {
+    padding: 1rem 0;
+    min-height: 648px;
+}
+
+.THIS .listing {
+   
+    margin-bottom: 2rem;
+    width: 280px;
+}
+.THIS .listing-info, .THIS .listing-image img {
+    cursor: pointer;
+}
+
+.THIS .listing-image {
+    height: 150px;
+    /*background-color: #eee;*/
+}
+
+.THIS .listing-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.THIS .title {
+    font-size: 1.1rem;
+    color: #232323;
+}
+
+.THIS .tagline {
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    color: #8e8e8e;
+}
+
+.THIS .description {
+    overflow: hidden;
+}
+
+.THIS .card {
+    box-shadow: 0 4px 24px 0 rgba(0,0,0,0.15);
+    border-radius: 4px;
+    transition: 0.3s;
+    position: relative;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+.THIS .card:hover {
+    box-shadow: 0 8px 48px 4px rgba(0,0,0,0.15);
+}
+
+.THIS .card img {
+    border-radius: 5px 5px 0 0;
+}
+
+.THIS .card .ribbon {
+  position: absolute;
+  left: -5px; top: -5px;
+  z-index: 1;
+  overflow: hidden;
+  width: 75px; height: 75px;
+  text-align: right;
+}
+.THIS .block-with-text{
+    color:rgb(142, 142, 142);
+}
+.THIS .card .ribbon span {
+  font-size: 12px;
+  font-weight: bold;
+  color: #FFF;
+  /*text-transform: uppercase;*/
+  text-align: center;
+  line-height: 20px;
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+  width: 100px;
+  display: block;
+  background: linear-gradient(#F7D64F 0%, #EFB720 100%);
+  box-shadow: 0 3px 10px -5px rgba(0, 0, 0, 1);
+  position: absolute;
+  top: 19px; left: -21px;
+}
+.THIS .card .ribbon span::before {
+  content: "";
+  position: absolute; left: 0px; top: 100%;
+  z-index: -1;
+  border-left: 3px solid #EFB720;
+  border-right: 3px solid transparent;
+  border-bottom: 3px solid transparent;
+  border-top: 3px solid #EFB720;
+}
+.THIS .card .ribbon span::after {
+  content: "";
+  position: absolute; right: 0px; top: 100%;
+  z-index: -1;
+  border-left: 3px solid transparent;
+  border-right: 3px solid #EFB720;
+  border-bottom: 3px solid transparent;
+  border-top: 3px solid #EFB720;
+}
+
+
+.THIS .card .ribbon2  {
+  position: absolute;
+  left: -5px; top: -5px;
+  z-index: 1;
+  overflow: hidden;
+  width: 140px; height: 140px;
+  text-align: right;
+}
+.THIS .card .ribbon2 span {
+  font-size: 10px;
+  font-weight: bold;
+  color: #FFF;
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 20px;
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+  width: 170px;
+  display: block;
+  background: #79A70A;
+  background: linear-gradient(#2989d8 0%, #1e5799 100%);
+  box-shadow: 0 3px 10px -5px rgba(0, 0, 0, 1);
+  position: absolute;
+  top: 30px; left: -40px;
+}
+.THIS .card .ribbon2 span::before {
+  content: "";
+  position: absolute; left: 0px; top: 100%;
+  z-index: -1;
+  border-left: 3px solid #1e5799;
+  border-right: 3px solid transparent;
+  border-bottom: 3px solid transparent;
+  border-top: 3px solid #1e5799;
+}
+.THIS .card .ribbon2 span::after {
+  content: "";
+  position: absolute; right: 0px; top: 100%;
+  z-index: -1;
+  border-left: 3px solid transparent;
+  border-right: 3px solid #1e5799;
+  border-bottom: 3px solid transparent;
+  border-top: 3px solid #1e5799;
+}
+
+.THIS .slds-badge{
+   /* background-color:#0F132B;*/
+    background-color:#cb1a1a;
+    color: #FFF;
+    height:90%;
+}
+
+.THIS .logoImg {
+    width: 80px;
+    height: 80px;
+}
+
+.THIS .filterBtn{
+    color: #000000!important;
+    border: none!important;
+}

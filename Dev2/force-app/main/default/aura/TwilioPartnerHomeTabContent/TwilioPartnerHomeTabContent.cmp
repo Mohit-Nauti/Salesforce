@@ -1,0 +1,10 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" >
+	<div>
+        <center>
+               		<h1 class="tagline">{!$Label.c.Comd_TPHTC_We_Cannot_Wait}</h1>
+            
+            <a class="become" href="https://build.twilio.com/s" target="_blank">{!$Label.c.Comd_TPHTC_Become_Partner}</a> 
+                  
+		</center>
+    </div>
+</aura:component>

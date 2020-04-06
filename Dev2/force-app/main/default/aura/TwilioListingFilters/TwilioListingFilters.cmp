@@ -1,0 +1,57 @@
+<aura:component controller="TwilioShowcaseController">
+    
+    <!--Handlers-->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler event="c:evt_ClearListingFilters" action="{!c.clearAll}"/>
+    <!--Attributes-->
+    <aura:attribute name="tabName" type="String" />
+    <aura:attribute name="filters" type="TwilioShowcaseController.Filter[]" />
+    <aura:attribute name="tier2Filters" type="TwilioShowcaseController.Filter[]" />
+    <!--Events-->
+    <aura:registerEvent name="evt_FilterListing" type="c:evt_FilterListing"/>
+    
+    <div>
+        <div class="slds-grid slds-grid_align-spread">
+        	<div class="slds-col" style="padding:0;">
+                <h3 class="slds-text-heading_small">Filters</h3>
+            </div>
+            <div class="slds-col" style="padding:0;">
+                <a onclick="{!c.clearAll}" id="clear-all" class="slds-float_right">Clear All</a>
+            </div>
+        </div>
+        
+        
+        <aura:iteration items="{!v.filters}" var="filter">
+            <div class="filter-label slds-m-vertical_x-small">{!filter.label}</div>
+            <aura:iteration items="{!filter.options}" var="option">
+                <div class="slds-form-element slds-m-bottom_x-small">
+                    <div class="slds-form-element__control">
+                        <span class="slds-checkbox">
+                            <input aura:id="filter-checkbox" type="checkbox" id="{!v.tabName+option}" data-filter="{!option.label}" data-filtergroup="{!filter.fieldName}" onchange="{!c.selectFilter}" />
+                            <label class="filter-label slds-checkbox__label" for="{!v.tabName+option}">
+                                <span class="slds-checkbox_faux"></span>
+                                <span class="filter-label-text slds-form-element__label">{!option.label}</span>
+                            </label>
+                        </span>
+                    </div>
+                </div>
+
+                <aura:iteration items="{!option.subOptions}" var="subOption" >
+                    <div class="slds-form-element slds-m-bottom_x-small slds-m-left_medium">
+                        <div class="slds-form-element__control">
+                            <span class="slds-checkbox">
+                                <input aura:id="filter-checkbox" type="checkbox" id="{!v.tabName+subOption}" data-filter="{!subOption}" data-filtergroup="{!subOption.developerName}" onchange="{!c.selectSubFilter}" />
+                                <label class="filter-label slds-checkbox__label" for="{!v.tabName+subOption}">
+                                    <span class="slds-checkbox_faux"></span>
+                                    <span class="filter-label-text slds-form-element__label">{!subOption}</span>
+                                </label>
+                            </span>
+                        </div>
+                    </div>
+                </aura:iteration>
+            </aura:iteration>
+        </aura:iteration>
+
+    </div>
+	
+</aura:component>

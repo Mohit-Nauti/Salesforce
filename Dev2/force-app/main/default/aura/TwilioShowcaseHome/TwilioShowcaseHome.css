@@ -1,0 +1,54 @@
+.THIS .main-wrapper {
+    padding: 0 2rem;
+    max-width: 1550px;
+    margin: 0 auto;
+}
+
+@media screen and (max-width: 600px) {
+.THIS header {
+	padding-top: 2rem;
+    padding-bottom: 2rem;
+        padding-left: 0.75rem;
+         padding-right: 0.75rem;
+}
+}
+
+@media screen and (min-width: 600px) {
+.THIS header {
+	padding: 2rem;
+}
+}
+
+
+.THIS .tabs__nav, .THIS .slds-tabs_default__nav {
+    text-align: center;
+    display: block;
+}
+
+.THIS .tabs__item, .THIS .slds-tabs_default__item {
+    display: inline-grid;
+}
+ 
+    .THIS .Bapbtn{
+   
+    padding-left: 0px;
+    padding-right: 1px;
+    
+}
+@media screen and (max-width: 600px) {
+.THIS .slds-page-header__col-title img {
+    max-width: 100px;
+    height: auto;
+}
+}
+
+@media screen and (max-width: 320px) {
+.THIS .slds-page-header__col-title img {
+    max-width: 60px;
+    height: auto;
+}
+}
+
+.THIS .slds-page-header {
+    background-color:#ffffff;
+}

@@ -1,0 +1,56 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" controller="TwilioShowcaseController">
+    
+    <!--Handlers-->
+    <aura:handler name="render" value="{!this}" action="{!c.onRender}"/>
+    <aura:handler event="c:evt_SearchSubmitted" action="{!c.processSearch}"/>
+    
+    
+    <!--Attributes-->
+    <aura:attribute name="listingsPerPage" type="Integer" default="" />  
+    <aura:attribute name="searchTerm" type="String" default="" />
+    <aura:attribute name="totalApps" type="Integer" />
+    <aura:attribute name="totalAddons" type="Integer" />
+    <aura:attribute name="totalServices" type="Integer" />
+     <aura:attribute name="allPartnerServices" type="Integer" />
+    <aura:attribute name="totalFlex" type="Integer" />
+    
+    <lightning:tabset>
+        <lightning:tab aura:id="viewAllTab" label="View All"> 
+            <c:TwilioShowcaseListings searchTerm="{!v.searchTerm}" tabName="showAllListings" listingsPerPage="{!v.listingsPerPage}" />
+        </lightning:tab>
+        <lightning:tab aura:id="consultantTab" label="{!$Label.c.Comd_TSC_Consultants}">
+            <c:TwilioShowcaseListings searchTerm="{!v.searchTerm}" tabName="Service Listing" listingsPerPage="{!v.listingsPerPage}" />
+        </lightning:tab>
+        <lightning:tab aura:id="appTab" label="{!$Label.c.Comd_TSC_Apps}"> 
+            <c:TwilioShowcaseListings searchTerm="{!v.searchTerm}" tabName="App Listing" listingsPerPage="{!v.listingsPerPage}" />
+        </lightning:tab>
+        
+        <!--  <aura:if isTrue="{!v.totalApps != null}">
+            <div class="notification-bubble">{!v.totalApps}</div>
+        </aura:if>-->
+        
+        <lightning:tab aura:id="addOntab" label="{!$Label.c.Comd_TSC_AddOns}"> 
+            <c:TwilioShowcaseListings searchTerm="{!v.searchTerm}" tabName="Add-On Listing" listingsPerPage="{!v.listingsPerPage}" />
+        </lightning:tab>
+        <!--  <aura:if isTrue="{!v.totalAddons != null}">
+            <div class="notification-bubble">{!v.totalAddons}</div>
+        </aura:if>-->
+        
+        
+        <!--
+        <lightning:tab aura:id="flextab" label="{!$Label.c.Comd_TSC_FlexR}">
+            <c:TwilioShowcaseListings searchTerm="{!v.searchTerm}" tabName="Flex Listing" listingsPerPage="{!v.listingsPerPage}" />
+        </lightning:tab>-->
+        <!--  <aura:if isTrue="{!v.totalServices != null}">
+            <div class="notification-bubble">{!v.totalServices}</div>
+        </aura:if>-->
+        
+        
+        <!--  <aura:if isTrue="{!v.totalFlex != null}">
+            <div class="notification-bubble">{!v.totalFlex}</div>
+        </aura:if>       -->
+    </lightning:tabset>
+    
+    
+    
+</aura:component>

@@ -1,0 +1,21 @@
+<aura:component implements="forceCommunity:themeLayout,forceCommunity:availableForAllPageTypes" access="global" description="Standard Twilio footer">
+    
+    <footer>
+            <div class="footer-container">
+                <img src="{!$Resource.marketplace + '/images/twilio-logo-circle.png'}"  class="footer__logo" />
+                <ul class="legal__list">
+                    <li class="legal__list-item"><a href="https://www.twilio.com/company" class="legal__link">{!$Label.c.Comd_TWFOOTER_ABT_Twilio}</a></li>
+                    <li class="legal__list-item"><a href="https://www.twilio.com/legal" class="legal__link">{!$Label.c.Comd_TWFOOTER_Legal}</a></li>
+                    <li class="legal__list-item"><a href="https://www.twilio.com/legal/privacy" class="legal__link">{!$Label.c.Comd_TWFOOTER_Privacy}</a></li>
+                    <li class="legal__list-item"><a href="http://twilio.org" class="legal__link">{!$Label.c.Comd_TWFOOTER_Twilio_org}</a></li>
+                    <li class="legal__list-item"><a href="https://www.twilio.com/press" class="legal__link"><aura:unescapedHtml value="{!$Label.c.Comd_TWFOOTER_PressM}" /></a></li> 
+                    <li class="legal__list-item"><a href="https://signal.twilio.com" class="legal__link">{!$Label.c.Comd_TWFOOTER_SIGNAL}</a></li>
+                    <li class="legal__list-item"><a href="https://investors.twilio.com" class="legal__link">{!$Label.c.Comd_TWFOOTER_Investors}</a></li>
+                    <li class="legal__list-item"><a href="https://www.twilio.com/company/jobs" class="legal__link">{!$Label.c.Comd_TWFOOTER_Jobs}</a></li>
+                </ul>
+                
+                <span class="legal__list-item"> {!$Label.c.Comd_TWFOOTER_CopyRight} </span>
+            </div>
+        </footer> 
+	
+</aura:component>

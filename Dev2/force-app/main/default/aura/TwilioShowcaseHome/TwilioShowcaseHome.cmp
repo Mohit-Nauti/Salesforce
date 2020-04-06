@@ -1,0 +1,24 @@
+<aura:component implements="forceCommunity:themeLayout,forceCommunity:availableForAllPageTypes" access="global" description="Showcase Layout">
+    <div>
+        <div class="main-wrapper">
+            <div class="slds-page-header">
+                <div class="slds-page-header__row">
+                    <div class="slds-page-header__col-title">
+                        <a href="https://www.twilio.com">
+                            <img class="header-logo" src="{!$Resource.marketplace + '/images/logo-wordmark--red.svg'}" />
+                        </a>
+                    </div>
+                    <div class="slds-page-header__col-actions">
+                        <lightning:button variant="brand" label="Become a Partner" title="Become a Partner" onclick="{! c.gotoURL }" />
+                        
+                            
+                        
+                    </div>
+                </div>
+            </div>
+                {!v.body}
+            </div>
+            <c:TwilioFooter />
+        </div>
+        
+    </aura:component>

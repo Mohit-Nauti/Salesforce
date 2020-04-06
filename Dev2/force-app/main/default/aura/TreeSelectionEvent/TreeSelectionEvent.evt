@@ -1,0 +1,5 @@
+<aura:event type="COMPONENT" access="global" description="Event thrown when a tree node/leaf is selected">
+    <aura:attribute name="selection" type="Object" access="global" description="Data associated with the selected tree node/leaf"/>
+     <aura:attribute name="parent" type="Object" access="global" description="parent tree note value"/>
+    <aura:attribute name="select" type="boolean" access="global" description="selected or unselected"/>
+</aura:event>

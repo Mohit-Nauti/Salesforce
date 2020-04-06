@@ -1,0 +1,16 @@
+<aura:component controller="PartnerListingAssetController">
+	 <aura:attribute name="assetId" type="id" />
+    <aura:attribute name="content" type="Object" />
+    
+   
+    <aura:attribute name="prefixURL" type="String" default="/sfc/servlet.shepherd/version/download/"/>
+     
+     <aura:registerEvent name="carouselCloseModal" type="c:CarouselModalClose"/>
+    <aura:handler name="init" value="{!this }" action="{!c.init}"/>
+     <c:CommunityPrefix aura:id="cmPrefix"></c:CommunityPrefix>
+   <img src="{!v.prefixURL + v.content.Id}" width="100" height="100"/>
+    
+    <div class="wrapper">
+            <lightning:button variant="brand" class="slds-m-top_small"  label="Close" type="Button" onclick="{!c.handleClose}"/>
+    </div>
+</aura:component>

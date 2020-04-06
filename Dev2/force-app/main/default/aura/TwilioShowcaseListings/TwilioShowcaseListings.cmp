@@ -1,0 +1,142 @@
+<aura:component controller="TwilioShowcaseController">
+    
+    <!--Handlers-->
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler name="evt_FilterListing" event="c:evt_FilterListing" action="{!c.modifyFilters}"/>
+    <aura:handler event="c:evt_FilterListingModal" action="{!c.modifyFilters}"/>
+    <aura:handler name="change" value="{!v.numItems}" action="{!c.itemsChange}"/>
+    <aura:handler name="change" value="{!v.searchTerm}" action="{!c.processSearch}" />
+    <aura:handler name="change" value="{!v.pageNumber}" action="{!c.renderListingSubset}" />
+    <!--Attributes-->
+    <aura:attribute name="overlayPanel" type="Object" />
+    <aura:attribute name="listings" type="TwilioShowcaseController.Listing[]" />
+    <aura:attribute name="filteredListings" type="TwilioShowcaseController.Listing[]" />
+    <aura:attribute name="listingsSubset" type="TwilioShowcaseController.Listing[]" />
+    <aura:attribute name="tabName" type="String" />
+    <aura:attribute name="filterGroupList" type="Object" />
+    <aura:attribute name="pageNumber" type="Integer" default="1" />
+    <aura:attribute name="maxPage"  type="Integer" default="1" />
+    <aura:attribute name="listingsPerPage" type="Integer" default="15" />
+    <aura:attribute name="searchTerm" type="String" default="" />
+    <aura:if isTrue="{!$Browser.isPhone}">
+        <div class="slds-grid slds-gutters slds-wrap">
+            <div class="slds-col slds-size_1-of-1 slds-small-size_1-of-3 slds-medium-size_1-of-4 slds-large-size_2-of-12">
+                <lightning:buttonIcon iconName="utility:filterList" size="medium"  onclick="{!c.showFilter}" alternativeText="filter" />
+                <lightning:overlayLibrary aura:id="filterOverlayLib"/>
+                
+            </div>
+            <ul >
+                <aura:iteration items="{!v.listingsSubset}" var="listing">
+                    <li class="slds-item slds-p-bottom_medium slds-p-top_small">
+                        <div class="card" data-recordid="{!listing.partnerListing.Id}" onclick="{!c.loadListingDetail}">
+                            <!--
+                                        Description: In this we check the Patner_Tier__c according to that we
+                                                    fetch the static resource. So the different svg file on
+                                                    different values of partner_tier__c.
+                                         -->
+                            <aura:if isTrue="{!listing.partnerListing.Partner_Tier__c=='Gold' }">
+                                <div class="ribbon"><img src="{!$Resource.Partner_Account_Level+'/images/gold_partner_sash.svg'}"/></div>
+                            </aura:if>
+                            <aura:if isTrue="{!listing.partnerListing.Partner_Tier__c=='Silver' }">
+                                <div class="ribbon"><img src="{!$Resource.Partner_Account_Level+'/images/silver_partner_sash.svg'}"/></div>
+                            </aura:if> 
+                            <aura:if isTrue="{!listing.partnerListing.Partner_Tier__c=='Bronze' }">
+                                <div class="ribbon"><img src="{!$Resource.Partner_Account_Level+'/images/bronze_partner_sash.svg'}"/></div>
+                            </aura:if> 
+                            <article class="slds-tile slds-media slds-p-around_small">
+                                <div class="slds-media__figure">
+                                    <span class="slds-avatar logoImg">
+                                        <aura:if isTrue="{!listing.logoURL != null}">
+                                            <img src="{!listing.logoURL}" class="one" />
+                                            <aura:set attribute="else">
+                                                <img src="{!$Resource.marketplace + '/images/Missing_Logo.jpg'}" />
+                                            </aura:set>
+                                        </aura:if>
+                                    </span>
+                                </div>
+                                <div class="slds-media__body">
+                                    <div class="slds-tile__detail">
+                                        <div class="slds-media slds-media_center">
+                                            <div class="slds-grid slds-grid_align-spread slds-has-flexi-truncate">
+                                                <div class="title slds-text-heading_small slds-m-bottom_x-small" title="{!listing.partnerListing.Name}">{!listing.partnerListing.Name}</div>
+                                                <aura:if isTrue="{!listing.partnerListing.Flex_Ready__c}">
+                                                    <img style="height: 25px;" src="{!$Resource.flexbadge}" /></aura:if>
+                                            </div>
+                                        </div>
+                                        <div class="description block-with-text">{!listing.shortDescription}</div>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                    </li>
+                </aura:iteration>
+            </ul>
+        </div>           
+        
+        <aura:set attribute="else">
+            <div class="slds-grid slds-gutters slds-wrap">
+                <div class="slds-col slds-size_1-of-1 slds-small-size_1-of-3 slds-medium-size_1-of-4 slds-large-size_2-of-12">
+                    <!-- <c:TwilioListingFilters tabName="{!v.tabName}" /> -->
+                    <aura:if isTrue="{!v.tabName == 'showAllListings'}">
+                        &nbsp;
+                        <aura:set attribute="else">
+                            <c:TwilioListingFiltersNew tabName="{!v.tabName}" isMobile="false"/>
+                        </aura:set>
+                    </aura:if> 
+                   
+                       
+                </div>
+                <!-- lightning card div-->
+                <div class="slds-col slds-size_1-of-1 slds-small-size_2-of-3 slds-medium-size_3-of-4 slds-large-size_9-of-12">
+                    <div class="slds-grid slds-gutters slds-wrap">
+                        <aura:iteration items="{!v.listingsSubset}" var="listing">
+                            <!--<div class="slds-col slds-size_1-of-1 slds-small-size_1-of-2 slds-medium-size_1-of-3 slds-large-size_1-of-4">-->
+                            <div class="slds-col slds-no-flex">
+                                <div class="listing card" data-recordid="{!listing.partnerListing.Id}" onclick="{!c.loadListingDetail}" >
+                                    <!--
+                                        Description: In this we check the Patner_Tier__c according to that we
+                                                    fetch the static resource. So the different svg file on
+                                                    different values of partner_tier__c.
+                                     -->
+                                    <aura:if isTrue="{!listing.partnerListing.Partner_Tier__c=='Gold' }">
+                                        <div class="ribbon"><img src="{!$Resource.Partner_Account_Level+'/images/gold_partner_sash.svg'}"/></div>
+                                    </aura:if>
+                                    <aura:if isTrue="{!listing.partnerListing.Partner_Tier__c=='Silver' }">
+                                        <div class="ribbon"><img src="{!$Resource.Partner_Account_Level+'/images/silver_partner_sash.svg'}"/></div>
+                                    </aura:if> 
+                                    <aura:if isTrue="{!listing.partnerListing.Partner_Tier__c=='Bronze' }">
+                                        <div class="ribbon"><img src="{!$Resource.Partner_Account_Level+'/images/bronze_partner_sash.svg'}"/></div>
+                                    </aura:if> 
+                                    <div class="listing-image">
+                                        <aura:if isTrue="{!listing.imgUrl != null}">
+                                            <img src="{!listing.imgUrl}" class="one" />
+                                            <aura:set attribute="else">
+                                                <img src="{!$Resource.marketplace + '/images/missing-image.jpg'}" class="two" />
+                                            </aura:set>
+                                        </aura:if>
+                                    </div>
+                                    <div class="listing-info slds-p-around_medium">
+                                        <!--<div class="title slds-text-heading_small slds-m-bottom_x-small" title="{!listing.partnerListing.Name}">{!listing.partnerListing.Name}</div>-->
+                                        <!--<div class="tagline slds-m-bottom_xx-small">{!listing.tagline}</div>-->
+                                        <div class="slds-media slds-media_center">
+                                            <div class="slds-grid slds-grid_align-spread slds-has-flexi-truncate ">
+                                                <div class="title slds-text-heading_small slds-m-bottom_x-small" title="{!listing.partnerListing.Name}" >{!listing.partnerListing.Name}</div>
+                                                <aura:if isTrue="{!listing.partnerListing.Flex_Ready__c}"><img  style="height: 25px;"  src="{!$Resource.flexbadge}" /></aura:if>
+                                            </div>
+                                        </div>
+                                        <div class="description block-with-text">{!listing.shortDescription}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </aura:iteration>
+                    </div>
+                    <aura:if isTrue="{!v.maxPage>1}">
+                        <c:PaginationControls currentPageNumber="{!v.pageNumber}" maxPageNumber="{!v.maxPage}" />
+                    </aura:if>
+                </div>
+                
+            </div>
+        </aura:set>
+    </aura:if>
+</aura:component>

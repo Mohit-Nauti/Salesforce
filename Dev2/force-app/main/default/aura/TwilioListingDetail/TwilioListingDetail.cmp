@@ -1,0 +1,56 @@
+<aura:component implements="forceCommunity:themeLayout,forceCommunity:availableForAllPageTypes" access="global" description="Showcase Detail Layout">
+	<div>
+        <div id="main-wrapper">
+            <div class="slds-page-header">
+                <div class="slds-page-header__row">
+                    <div class="slds-page-header__col-title">
+                        <a href="https://www.twilio.com">
+                            <img class="header-logo" src="{!$Resource.marketplace + '/images/logo-wordmark--red.svg'}" />
+                        </a>
+                    </div>
+                    <div class="slds-page-header__col-actions">
+                        <lightning:button variant="brand" label="Become a Partner" title="Become a Partner" onclick="{! c.gotoURL }" />
+                   </div>
+                </div>
+                 <div class="slds-page-header__row">
+                      <a onclick="{!c.backAction}">
+                    <div class="slds-m-top_x-large slds-media slds-media_small">
+                        <div class="slds-media__figure">
+                            <lightning:icon id="icon" iconName="utility:back" size="small" />
+                        </div>
+                        <div class="slds-media__body clickable whitney-tight txt">
+                            <p>Back</p>
+                        </div>
+                    </div>
+                </a>
+                </div>
+            </div>
+            <!--
+            <header>
+                <div>
+                    <a href="https://www.twilio.com">
+                        <img class="header-logo" src="{!$Resource.marketplace + '/images/logo-wordmark-red.svg'}" />
+                    </a>
+                    <a href="https://build.twilio.com">
+                        <button class="slds-button slds-button_brand slds-float_right">Become a Partner</button>
+                    </a>
+                </div>
+                <a onclick="{!c.backAction}">
+                    <div class="slds-m-top_x-large slds-media slds-media_small">
+                        <div class="slds-media__figure">
+                            <lightning:icon id="icon" iconName="utility:back" size="small" />
+                        </div>
+                        <div class="slds-media__body clickable whitney-tight">
+                            <p>Back</p>
+                        </div>
+                    </div>
+                </a>
+            </header>-->
+            {!v.body}
+        </div>
+        <footer class="footer">
+            <div class="cursive">We can't wait to see what you build!</div>
+            <c:TwilioFooter/>
+        </footer>
+    </div>
+</aura:component>

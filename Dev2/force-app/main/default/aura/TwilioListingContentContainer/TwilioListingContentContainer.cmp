@@ -1,0 +1,34 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global">
+
+    <aura:registerEvent name="closeModal" type="c:evt_CloseModal"/>
+
+    <aura:attribute name="listingrecordId" type="String" />
+    <aura:attribute name="partnerleadFields" type="String[]" default="['Title__c','Last_Name__c','First_Name__c','Email__c','Phone__c','Company__c','Country__c','State_Province__c','City__c','Postal_Code__c','Comments_Or_Question_For_Partner__c','Terms_of_Service__c']" />
+
+    <lightning:recordEditForm
+        aura:id="form"
+        objectApiName="Partner_Lead__c"
+        onsubmit="{!c.handleSubmit}"
+        onload="{!c.handleOnload}"
+        onsuccess = "{!c.handleSuccess}"
+    >
+          <lightning:inputField fieldName="Title__c" />
+        <lightning:inputField fieldName="Last_Name__c" />
+        <lightning:inputField fieldName="First_Name__c" />
+        <lightning:inputField fieldName="Email__c" />
+        <lightning:inputField fieldName="Phone__c" />
+        <lightning:inputField fieldName="Company__c" />
+        <lightning:inputField fieldName="Country__c" />
+        <lightning:inputField fieldName="State_Province__c" />
+        <lightning:inputField fieldName="Comments_Or_Question_For_Partner__c" />
+         <lightning:inputField fieldName="Terms_of_Service__c" />
+        <div class="slds-p-top_x-large"><p>{!$Label.c.Comd_TwilioListingContentContainer_More_Info} <span class="list-item-link"><a target="_new" href="https://www.twilio.com/legal/privacy" title="www.twilio.com/legal/privacy">Twilio Privacy</a></span></p></div>
+      
+           <div class="wrapper">
+            <lightning:button type="submit" variant="brand" class="slds-m-top_small" label="Save" />
+        </div>
+           
+            
+    </lightning:recordEditForm>
+     
+</aura:component>

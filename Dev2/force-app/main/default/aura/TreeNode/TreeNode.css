@@ -1,0 +1,27 @@
+.THIS .collapsed {
+    display:none;
+}
+
+.THIS .spacer {
+    min-width: 22px;
+    display:inline-block; width:22px;
+}
+
+.THIS .slds-tree__item .slds-button {
+    margin-top:0rem;
+}
+/*.THIS .slds-form-element__label{
+        max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}*/
+
+.THIS .slds-form-element__label{
+    margin-top: -28px;
+    margin-left: 22px;
+    display: block;
+}
+.THIS .slds-checkbox_faux{
+    margin-top:10px;
+}

@@ -1,0 +1,27 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" >
+    <aura:attribute name="header" type="String" access="global" default="" description="An optional text header"/>
+    <aura:attribute name="items" type="List" access="global" required="true" description="The tree data"/>
+    <aura:attribute name="config" type="Object" access="global" default="{}" description="An optional tree configuration, see 'configuration' under component description for more details."/>
+    <aura:attribute name="selectedValues" type="List" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:method name="getSelectedRows" action="{!c.fetchSelectedRows}"  > 
+    </aura:method>
+    <div class="slds-tree_container" role="application">
+        <aura:if isTrue="{!!empty(v.header)}">
+             <div class="slds-grid slds-grid_align-spread">
+        	<div class="slds-col" style="padding:0;">
+                <h3 class="slds-text-heading_small">{!v.header}</h3>
+            </div>
+            <div class="slds-col" style="padding:0;">
+                <a onclick="{!c.clearAll}" id="clear-all" class="slds-float_right">Clear All</a>
+            </div>
+        </div>
+           
+        </aura:if>{!v.selectedValues}
+        <ul class="slds-tree" role="tree" aria-labelledby="treeheading" aria-activedescendant="tree0-node1">
+            <aura:iteration items="{!v.items}" var="childItem">
+                <c:TreeNode aura:id="childCmp" item="{!childItem}" level="1" config="{!v.config}" selectedValues="{!v.selectedValues}" />
+            </aura:iteration>
+        </ul>
+    </div>
+</aura:component>

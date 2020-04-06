@@ -1,0 +1,44 @@
+.THIS .wrapper {
+    text-align: center;
+    width:100%;
+    padding: 1em;
+}
+
+/*.THIS .slds-table_tree [aria-level="1"]>.slds-tree__item, .THIS .slds-table--tree [aria-level="1"]>.slds-tree__item{
+    padding-left:2rem;
+}
+.THIS .slds-table_tree [aria-level="1"]>.slds-cell-edit, .THIS .slds-table--tree [aria-level="1"]>.slds-cell-edit{
+    padding-left:2rem;
+}
+
+.THIS .slds-table_tree [aria-level="2"] > .slds-tree__item,.THIS .slds-table--tree [aria-level="2"] > .slds-tree__item {
+    padding-left: 4rem;
+}
+.THIS .slds-table_tree [aria-level="2"] > .slds-cell-edit,.THIS .slds-table--tree [aria-level="2"] > .slds-cell-edit {
+    padding-left: 4rem;
+}
+
+.THIS .slds-table_tree [aria-level="3"] > .slds-tree__item, .THIS .slds-table--tree [aria-level="3"] > .slds-tree__item {
+    padding-left: 3rem;
+}
+.THIS .slds-table_tree [aria-level="3"] > .slds-cell-edit, .THIS .slds-table--tree [aria-level="3"] > .slds-cell-edit {
+    padding-left: 4rem;
+}
+
+.THIS .slds-th__action{
+    padding-left:0.25rem;
+    padding-right:0.25rem;
+}
+
+}*/
+
+.THIS .slds-table_tree [aria-level="1"]>.slds-tree__item, .THIS .slds-table--tree [aria-level="1"]>.slds-tree__item{
+    padding-left:0.5rem;
+}
+.THIS .slds-table_tree [aria-level="2"] > .slds-tree__item,.THIS .slds-table--tree [aria-level="2"] > .slds-tree__item {
+    padding-left: 1rem;
+}
+
+.THIS .slds-table_tree [aria-level="3"] > .slds-tree__item, .THIS .slds-table--tree [aria-level="3"] > .slds-tree__item {
+    padding-left: 1.5rem;
+}

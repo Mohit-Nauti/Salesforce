@@ -1,0 +1,58 @@
+.THIS .carousel {
+    width:660px;
+    height:450px;
+    background-color:#D8D8D8;
+    border: solid 1px #BABABA;
+}
+
+.THIS .overview {
+    flex-grow: 1;
+    height: 450px;
+    /* background-color: #f22f46; */
+    padding-left: 36px;
+}
+
+.THIS .carousel-chevron svg {
+    fill: #fff;
+}
+
+.THIS .flex-vertical-center {
+    display:flex;
+    align-items:center;
+}
+
+.THIS .flex-space-between {
+    height:100%;
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+}
+
+.THIS .info-trio {
+    display: flex;
+    justify-content: space-between;
+}
+
+.THIS expand {
+    /* height: 100%;
+    width: 100%; */
+    background-color: #BABABA;
+}
+
+.THIS .slds-button_neutral {
+    display: none;
+}
+
+.THIS .list-item-link a {
+    color: #f12e45;
+    font-weight: 300;
+    font-size: 13px;
+    display: inline-block;
+    position: relative;
+    margin-top: 5px;
+}
+
+.THIS .wrapper {
+    text-align: center;
+    padding: 1em;
+}

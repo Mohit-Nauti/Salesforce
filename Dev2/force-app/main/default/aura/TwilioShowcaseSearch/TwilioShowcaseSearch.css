@@ -1,0 +1,73 @@
+.THIS #search-wrapper {
+    text-align:center;
+}
+
+@media screen and (max-width: 560px) {
+    .THIS #search-wrapper > .slds-form-element {
+    display: inline-block;
+    width:189px;
+}
+}
+
+@media screen and (min-width: 560px) and (max-width:800px) {
+    .THIS #search-wrapper > .slds-form-element {
+    display: inline-block;
+    width:400px;
+  }
+}
+
+@media screen and (min-width: 801px)  {
+    .THIS #search-wrapper > .slds-form-element {
+    display: inline-block;
+    width:600px;
+  }
+}
+
+
+
+/*.THIS #search-wrapper > .slds-form-element {
+    display: inline-block;
+    width:600px;
+}*/
+.THIS #search-wrapper input {
+    height: 50px;
+    padding-left: 3rem;
+    border-radius: 0;
+}
+
+.THIS .slds-button {
+    vertical-align: top;
+    height: 50px;
+    
+}
+
+.THIS .slds-button, .THIS input, .THIS ::placeholder {
+    font-size: 1rem;
+}
+
+.THIS ::-ms-input-placeholder, .THIS :-ms-input-placeholder {
+    font-size: 1rem;
+}
+
+.THIS .slds-icon-utility-search {
+    top: 40%;
+}
+
+.THIS .slds-icon-utility-search svg {
+    fill:#b3b3b3;
+}
+
+
+.THIS #search-wrapper .slds-form-element__label {
+    display: none;
+}
+.THIS lightning-icon{
+    z-index:1 !important;
+}
+
+.THIS .clear-search {
+    position: absolute;
+    top: 15px;
+    right: 5px;
+    cursor: pointer;
+}

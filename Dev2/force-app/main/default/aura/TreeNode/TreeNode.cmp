@@ -1,0 +1,53 @@
+<aura:component >
+    <aura:attribute name="item" type="Object" required="true" />
+    <aura:attribute name="level" type="Integer" required="true" />
+    <aura:attribute name="config" type="Map" default="{}" />
+    <aura:attribute name="selectedValues" type="List" />
+    
+    <aura:attribute name="label" type="String"  />
+    <aura:attribute name="value" type="String" />
+    <aura:attribute name="children" type="List" />
+    <aura:attribute name="toggleExpandIcon" type="String" access="private" default="utility:chevrondown"/>
+    <aura:attribute name="selected" type="boolean"  />
+    <aura:attribute name="parent" type="Object" />
+    
+    <aura:attribute name="onToggleExpand" type="Aura.Action" access="private" default="{!c.onToggleExpand}" />
+    <aura:attribute name="onSelectNode" type="Aura.Action" access="private" default="{!c.onSelectNode}" />
+    <aura:handler name="treeSelectionEvent" event="c:TreeSelectionEvent" action="{!c.handleTreeSelection}"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <aura:registerEvent name="treeSelectionEvent" type="c:TreeSelectionEvent"/>
+    <aura:method name="setSelected" action="{!c.selectItem}" 
+                 description=""> 
+        <aura:attribute name="selected" type="boolean" /> 
+    </aura:method>
+    <aura:method name="getSelectedRows" action="{!c.fetchSelectedRows}"  > 
+    </aura:method>
+    <aura:method name="clearAll" action="{!c.clearAllNodes}"  > 
+    </aura:method>
+    <li role="treeitem" aria-level="{!v.level}">
+        
+        <!-- Node/leaf -->
+        <div class="slds-tree__item" >
+            <aura:if isTrue="{!!empty(v.children)}">
+                <button class="slds-button slds-m-right--x-small spacer" onclick="{!v.onToggleExpand}">
+                    <lightning:icon iconName="{!v.toggleExpandIcon}" size="xx-small" class="slds-button__icon slds-button__icon--small" />
+                </button>
+                <aura:set attribute="else">
+                    <span class="spacer  slds-m-right--x-small"></span>
+                </aura:set>
+            </aura:if>
+            <lightning:input type="checkbox"  label="{!v.label}" name="input1" checked="{!v.selected}"  onchange="{!c.onSelectChange}"/>
+        </div>
+        
+        <!-- Sub tree -->
+        <aura:if isTrue="{!!empty(v.children)}">
+            <ul aura:id="subTree" class="slds-tree" role="tree" aria-labelledby="treeheading" aria-activedescendant="tree0-node1">
+                <aura:iteration items="{!v.children}" var="childItem">
+                    <c:TreeNode aura:id="childNode" item="{!childItem}" level="{!v.level +1}" config="{!v.config}" parent="{!v.value}" selectedValues="{!v.selectedValues}"/>
+                </aura:iteration>
+            </ul>
+        </aura:if>
+        
+    </li>
+</aura:component>

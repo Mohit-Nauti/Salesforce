@@ -1,0 +1,20 @@
+.THIS #clear-all {
+    color:#f22f46;
+}
+
+.THIS .filter-label {
+    margin-top: 15px;
+}
+
+.THIS .filter-label-text {
+    display: inline-block;
+    width: 150px;
+    white-space: normal;
+}
+.THIS .filter-label {
+    white-space: nowrap;
+}
+
+.THIS .menu-test ul {
+    display: none;
+}

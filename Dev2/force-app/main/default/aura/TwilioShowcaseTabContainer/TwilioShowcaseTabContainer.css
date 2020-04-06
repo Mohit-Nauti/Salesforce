@@ -1,0 +1,35 @@
+.THIS {
+    font-family: whitney-medium;
+}
+
+.THIS .notification-bubble {
+    border-radius: 50%;
+    background-color: #F13349;
+    border-color: #ccc;
+    border-width: 1px;
+    display: inline-block;
+    height: 17px;
+    width: 17px;
+    color: #fff;
+    font-size: 11px;
+    vertical-align: top;
+    margin-left: -7px;
+    box-shadow: -1px 1px #aaa;
+}
+
+.THIS .slds-tabs_default__nav li a {
+    /* font-family: knockout; — REMOVE KNOCKOUT */
+  font-size: .9rem;
+}
+
+.THIS .slds-tabs_default__nav li:not(.slds-active) a {
+    color: #000;
+}
+
+.THIS .slds-tabs_default__item:not(.slds-active)::after {
+    display: none;
+}
+
+.THIS .slds-dropdown-trigger_click{
+    display:none;
+}

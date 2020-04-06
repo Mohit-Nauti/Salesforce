@@ -1,0 +1,25 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" controller="TwilioShowcaseController">
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+	<aura:attribute name="tabName" type="String" default="Service Listing"/>
+    <aura:attribute name="isMobile" type="boolean" default="false"/>
+  <aura:registerEvent name="evt_FilterListing" type="c:evt_FilterListing"/>
+    <aura:registerEvent name="evt_FilterListingModal" type="c:evt_FilterListingModal"/>
+    <aura:attribute name="gridColumns" type="List" />
+    <aura:attribute name="gridData" type="Object" />
+     <aura:attribute name="selectedValues" type="Object" />
+     <aura:attribute name="selectedRows" type="Object"/>
+    <lightning:overlayLibrary aura:id="filterOverlayLib1"/>
+    <aura:attribute name="selecteditems" type="List" ></aura:attribute> 
+     <aura:attribute name="treeConfig" type="Map" default="{'labelProperties': ['label'], 'expandProperties': ['_children'],'valueProperties':['value'] ,'isSelectable': true, 'isNodeSelectionEnabled': true, 'expandLevel': 1}" />
+<aura:handler name="treeSelectionEvent" event="c:TreeSelectionEvent" action="{!c.handleRowSelected}"/>
+
+   {!v.selectedValues}
+    <c:Tree aura:id="accountTree" header="Filters" items="{!v.gridData}" config="{!v.treeConfig}" selectedValues="{!v.selectedValues}"></c:Tree>
+    <aura:if isTrue="{!v.isMobile}">
+    <div class="wrapper">
+         <lightning:button variant="brand" class="slds-m-top_small" onclick="{!c.handleCancel}" label="Cancel" />
+            <lightning:button variant="brand" class="slds-m-top_small" onclick="{!c.handleSubmit}" label="Apply" />
+    </div>
+        </aura:if>
+</aura:component>

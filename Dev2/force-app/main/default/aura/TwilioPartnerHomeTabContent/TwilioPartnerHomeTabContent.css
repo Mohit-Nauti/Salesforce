@@ -1,0 +1,40 @@
+.THIS .tagline {
+    margin-top: 30px;
+    margin-top: 30px;
+    color: #636985;
+    font-family: surveyor, "Times New Roman", Times, serif;
+    font-size:2.5vw;
+}
+
+@media screen and (max-width: 600px) {
+    .THIS .tagline {
+    
+    font-size:4.5vw;
+}
+}
+.THIS {
+    background-color: #0d112b;
+    width: 100%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    letter-spacing: .15em;
+    display: flex;
+    align-items: bottom;
+    justify-content: center;
+    font-family: "Times New Roman", Times, serif;
+    font-style: italic;
+
+}
+
+.THIS .become {
+    color: #565b73;
+}
+
+.THIS .cursive {
+    margin-top: 42px;
+    color: #565b73;
+    text-align: center;
+    font-family: surveyor;
+    font-size: 2.5rem;
+}

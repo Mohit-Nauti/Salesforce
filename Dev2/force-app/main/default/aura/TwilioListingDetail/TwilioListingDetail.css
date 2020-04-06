@@ -1,0 +1,88 @@
+.THIS {
+    background-color: #0D112B;
+}
+
+.THIS .siteforceSldsOneColLayout > .contentRegion {
+    padding-top: 0 !important;
+}
+
+.THIS .header-logo {
+    height: 40px;
+}
+
+.THIS #main-wrapper {
+    /* padding: 0 2rem; */
+    height: 100%;
+    max-width: 1550px;
+    margin: 0 auto;
+
+}
+.THIS header {
+    padding: 2rem 4rem 2rem 4rem;
+    background-color: #fff;
+}
+
+.THIS #company-banner {
+    min-height: 254px;
+    padding-left: 4rem;
+    padding-right: 4rem;
+}
+
+.THIS #company-banner .description {
+    color: #fff;
+    font-size: 32px;
+    max-width: 736px;
+}
+
+.THIS .brand {
+    color: #fff;
+    font-size: 42px;
+}
+
+.THIS #middle-region {
+    height: 796px;
+    padding: 47px;
+    background-color: #fff;
+}
+
+.THIS .footer {
+    /* height: 360px; */
+    /* background-color: #0D112B; */
+    flex-shrink: 0;
+}
+
+.THIS .txt p {
+    color: #f22f46;
+    text-transform: uppercase;
+    /* margin-top: 0.1rem; */
+}
+
+.THIS #icon svg {
+    fill: #f22f46;
+}
+
+.THIS .clickable {
+    cursor: pointer;
+}
+
+.THIS .whitney-tight {
+    font-family: knockout!important;
+    font-size: large;
+}
+
+.THIS .cursive {
+    margin-top: 42px;
+    color: #565b73;
+    text-align: center;
+    font-family: surveyor;
+    font-size: 2.5rem;
+}
+
+.THIS a {
+    text-decoration: none;
+}
+
+.THIS .slds-page-header {
+   background-color:#ffffff;
+   border:0px solid rgba(0, 0, 0, 0);
+}
