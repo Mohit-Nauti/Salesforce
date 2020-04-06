@@ -1,0 +1,40 @@
+.THIS {
+    font-family: sans-serif;
+    font-size: .8rem;
+    display: flex;
+}
+
+.THIS .calendar {
+    width:75%;
+}
+
+.THIS .green {
+    background-color:#5cdc5c;
+    height: 2.25rem;
+}
+
+.THIS .red {
+    background-color: #59d2f7;
+    height: 2.25rem;
+}
+
+.THIS .gray {
+    background-color: #b6abaa;
+    height: 2.25rem;
+}
+
+.THIS .legend {
+    padding: 0rem 1rem .75rem 1rem;
+}
+
+.THIS .legend div {
+    padding: .5rem 1rem .5rem 1rem;
+    border-radius: 4px;
+}
+
+.THIS .myevent {
+    margin-top: 1rem;
+    background: #f5fdf4;
+    width: 26rem;
+    border: solid 1px #9ce2a5;
+}

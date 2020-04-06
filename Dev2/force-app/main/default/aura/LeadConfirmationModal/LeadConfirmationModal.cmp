@@ -1,0 +1,22 @@
+<aura:component access="global" >
+
+    <aura:registerEvent name="closeLeadModal" type="c:evt_CloseModal"/>
+
+    <div class="slds">
+        <div class="slds-align_absolute-center partner-text mainText">
+            <h1>
+                <b>
+                    Thank you for your interest in the Twilio/build Partner Program!
+                    </b>
+                </h1>
+          </div>
+          <div class="slds-align_absolute-center partner-text padText">
+            <h3>
+                Our team is reviewing your request and will reach out to you shortly.
+            </h3>
+        </div>
+        <div class="wrapper">
+            <lightning:button variant="brand" class="slds-button slds-button_brand whitney-light lighter" onclick="{!c.handleCancel}" label="Close" />
+        </div>
+    </div>
+</aura:component>

@@ -1,0 +1,48 @@
+<aura:component controller="CalendarEventController" implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" access="global" >
+	<ltng:require scripts="{!join(',', 
+                           $Resource.FullCalendar + '/lib/jquery.min.js', 
+                           $Resource.FullCalendar + '/lib/moment.min.js',
+                           $Resource.FullCalendar + '/fullcalendar.js')}"
+                  styles="{!$Resource.FullCalendar + '/fullcalendar.css'}"
+                  
+                  afterScriptsLoaded="{!c.scriptsLoaded}"/>
+    
+    <aura:attribute name="showModal" type="Boolean" default="false"/>
+    <aura:attribute name="showOkButton" type="Boolean" default="true"/>
+    <aura:attribute name="showEnrollButton" type="Boolean" default="true"/>
+    <aura:attribute name="showCancelEnrollButton" type="Boolean" default="false"/>
+    <aura:attribute name="showMeetingDetail" type="Boolean" default="true" access="public"/>
+    <aura:attribute name="showRegistrationDetail" type="Boolean" default="false" access="public"/>
+    <aura:attribute name="meetingName" type="String" default=""/>
+    <aura:attribute name="meetingTitle" type="String" default=""/>
+    <aura:attribute name="eventId" type="String" default=""/>
+    <aura:attribute name="eventDetail" type="String" default=""/>
+    <aura:attribute name="eventObject" type="Object"/>
+    <aura:attribute name="myEvents" type="Object"/>
+    <aura:attribute name="isWebinar" type="Boolean" default="true" access="public"/>
+
+    <div class="main">
+        <div aura:id="calendar" id='calendar' class="calendar"></div>
+        <div class="legend">
+            <div class="green">Already Requested Enrollment</div><br/>
+            <div class="red">Available</div><br/>
+            <div class="gray">Class is Full</div>
+            <div class="myevent">
+                
+                <c:LightningCalenderMyView signedEvents="{!v.myEvents}"/>
+            </div>
+        </div>
+    </div>
+    <c:LightningModel showOkButton="{!v.showOkButton}"
+                      showEnrollButton = "{!v.showEnrollButton}"
+                      showCancelEnrollButton = "{!v.showCancelEnrollButton}"
+                      isOpen="{!v.showModal}" 
+                      yesButton="{!c.enroll}" 
+                      cancelEnrollButton="{!c.cancelEnroll}"
+                      meetingName="{!v.meetingName}" 
+                      meetingTitle="{!v.meetingTitle}" 
+                      meetingObject="{!v.eventObject}"
+                      showRegistrationDetail="{!v.showRegistrationDetail}"
+                      showMeetingDetail="{!v.showMeetingDetail}"
+                      />
+</aura:component>

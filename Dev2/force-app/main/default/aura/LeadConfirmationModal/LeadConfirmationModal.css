@@ -1,0 +1,31 @@
+.THIS .wrapper {
+    text-align: center;
+    padding: 1em;
+}
+
+.THIS .whitney-light {
+    font-family: whitney-light !important;
+    /* font-size: 1rem !important; */
+}
+
+.THIS .slds-button_brand {
+    background-color: red;
+    border: none;
+    margin-top: -10rem;
+}
+
+.THIS .partner-text {
+    font-size: .9rem;
+    height: 100px;
+    font-family: whitney-light !important;
+}
+
+.THIS .padText{
+    padding-bottom : 120px;
+    padding-top : 3rem;
+}
+
+.THIS .mainText{
+    font-size : 1.1rem;
+    padding-top : 6rem;
+}
