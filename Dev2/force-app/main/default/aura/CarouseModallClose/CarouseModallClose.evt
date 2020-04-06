@@ -1,0 +1,1 @@
+<aura:event type="APPLICATION" description="Fired when new carousel modal is closed" />

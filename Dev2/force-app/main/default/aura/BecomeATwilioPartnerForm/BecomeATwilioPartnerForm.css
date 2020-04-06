@@ -1,0 +1,38 @@
+.THIS button[name="cancel"] {
+    color: #0070d2 !important;
+}
+
+.THIS button[name="submit"] {
+    visibility: hidden;
+}
+
+.THIS button[name="submit"]::after {
+    visibility: visible;
+    content: "Let's Talk";
+    text-align: center;
+}
+
+.THIS .slds-align_absolute-center {
+    margin-left: -1rem;
+    margin-right: -1rem;
+    margin-bottom: -1rem;
+    display: flex;
+    justify-content: flex-end;
+    background-color: #f3f2f2;
+    height: 4rem;
+    border-top: 2px solid #dddbda;
+}
+
+.THIS .wrapper {
+    text-align: center;
+    padding: 1em;
+}
+
+.THIS .list-item-link a {
+    color: #f12e45;
+    font-weight: 300;
+    font-size: 13px;
+    display: inline-block;
+    position: relative;
+    margin-top: 5px;
+}

@@ -1,0 +1,14 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,force:hasRecordId,flexipage:availableForRecordHome" access="global">
+
+    <div class="slds">
+
+        <div class="welcom">
+            <h1 style="color:black;" class="twilio-h1 slds-text-align_center">{!$Label.c.PARTNER_HOME_WELCOME}</h1>
+            <div class="centered slds-m-top_large">
+                <div class="slds-text-align_center descprition-text whitney-light lighter">
+                    {!$Label.c.PARTNER_HOME_AUTHENTICATED_CONTENT}
+                </div>
+            </div>
+        </div>
+    </div>
+</aura:component>

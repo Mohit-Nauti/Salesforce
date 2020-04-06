@@ -1,0 +1,105 @@
+<aura:component controller="BopsyChangeOpportunityOwnerController" implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes,force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global">
+
+<!-- <aura:handler name="init" action="{!c.checkUserProfile}" value="{!this}" /> -->
+
+<aura:attribute name="errorMessage" type="String" access="public"/>
+<aura:attribute name="recordId" type="String" access="public"/>
+<aura:attribute name="errorState" type="String" access="public" default="slds-theme_success"/>
+<aura:attribute name="buttonState" type="Boolean" access="public" default="true"/>
+<aura:attribute name="showComponent" type="Boolean" access="public" default="false"/>
+<aura:attribute name="showError" type="Boolean" access="public" default="false"/>
+<aura:attribute name="userId" type="String" access="public"/>
+<aura:attribute name="searchString" type="String" access="public"/>
+<aura:attribute name="userList" type="Object" access="public"/>
+<aura:if isTrue="{!v.showComponent}">
+      <aura:if isTrue="{!v.showError}">
+          <div class="demo-only" style="height:4rem">
+              <div class="slds-notify_container slds-is-relative">
+                <div class="{!'slds-notify slds-notify_toast '+v.errorState}" role="status">
+                  <span class="slds-assistive-text">success</span>
+                  <span class="slds-icon_container slds-icon-utility-success slds-m-right_small slds-no-flex slds-align-top" title="Description of icon when needed">
+                    
+                  </span>
+                  <div class="slds-notify__content">
+                    <h2 class="slds-text-heading_small ">
+                      {!v.errorMessage}
+                    </h2>
+                  </div>
+                  <div class="slds-notify__close">
+                    <button class="slds-button slds-button_icon slds-button_icon-inverse" title="Close">
+                      
+                      <span class="slds-assistive-text">Close</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+          </div>
+        </aura:if>
+        <article class="slds-card">
+                <div class="slds-card__header slds-grid">
+                  <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                    <div class="slds-media__figure">
+                      <span class="slds-icon_container slds-icon-standard-account" title="account">
+                          <lightning:icon iconName="standard:opportunity" alternativeText="Audio file"/>
+                        <span class="slds-assistive-text">account</span>
+                      </span>
+                    </div>
+                    <div class="slds-media__body">
+                      <h2 class="slds-card__header-title">
+                        <span>Select Opportunity Owner</span>
+                      </h2>
+                    </div>
+                  </header>
+                </div>
+                <div class="slds-card__body slds-card__body_inner">
+                        <lightning:input aura:id="searchInput" type="text" value="{!v.searchString}" onkeyup="{!c.findUserAction}" placeholder="Search People.."/>
+                        <br/>
+                        <div class="slds-form-element">
+                                <div class="slds-form-element__control">
+                                  <div class="slds-select_container">
+                                    <lightning:select aura:id="userselect" onchange="{!c.setUser}" value="{!v.userId}" title="Selected user will be the owner of Opportunity and its related records. Click on 'Assign' after the user is selected.">
+                                      <option value="">Select User from list</option>
+                                      <aura:iteration items="{!v.userList}" var="option">
+                                          <option value="{!option.userId}">{!option.username}</option>
+                                      </aura:iteration>
+                                    </lightning:select>
+                                  </div>
+                                </div>
+                        </div>
+                </div>
+                <footer class="slds-card__footer">
+                    <lightning:button variant="brand" label="Assign" title="Assign" onclick="{! c.assignUser }" disabled="{!v.buttonState}"/>
+                </footer>
+        </article>
+    </aura:if>
+    <aura:if isTrue="{!!v.showComponent}">
+      <article class="slds-card">
+        <div class="slds-card__header slds-grid">
+          <header class="slds-media slds-media_center slds-has-flexi-truncate">
+          <div class="slds-media__figure">
+          <span class="slds-icon_container slds-icon-standard-task" title="Opportunity">
+          
+          <span class="slds-assistive-text">Opportunity Owner</span>
+          </span>
+        </div>
+          <div class="slds-media__body">
+            <h2 class="slds-card__header-title">
+              <a href="javascript:void(0);" class="slds-card__header-link slds-truncate" title="Opportunity">
+              <span></span>
+              </a>
+            </h2>
+          </div>
+          </header>
+          </div>
+          <div class="slds-card__body slds-card__body_inner">
+            <div class="slds-illustration slds-illustration_small">
+            
+              <div class="slds-text-longform">
+                <h3 class="slds-text-heading_medium">Permission Denied</h3>
+                <p class="slds-text-body_regular">Nothing needs your attention right now. Check back later.</p>
+              </div>
+            </div>
+          </div>
+        </article>
+    </aura:if>
+</aura:component>

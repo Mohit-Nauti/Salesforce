@@ -1,0 +1,93 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" controller="PartnerSettingsController">
+
+    <aura:registerEvent name="closeModal" type="c:evt_CloseModal"/>
+
+    <aura:attribute name="partnerType" type="String" />
+    <aura:attribute name="recordTypeId" type="String" />
+    <aura:attribute name="leadFormsettings" type="Object" default ="{}"/>
+    <aura:attribute name="isSpinner" type="Boolean" default="false"/>
+    <aura:attribute name="country" type="String" />
+    <aura:attribute name="state" type="String" />
+    <aura:attribute name="title" type="String" />
+    <aura:attribute name="firstName" type="String" />
+    <aura:attribute name="lastName" type="String" />
+    <aura:attribute name="email" type="String" />
+    <aura:attribute name="company" type="String" />
+    <aura:attribute name="city" type="String" />
+    <aura:attribute name="zipCode" type="String" />
+    <aura:attribute name="phone" type="String" />
+    <aura:attribute name="doNotSyncWithEloqua" type="boolean" default="true"/>
+
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}"/>
+
+<div style="position:relative">
+     <aura:if isTrue="{!v.isSpinner}">
+    <!--  <lightning:spinner variant="brand" size="small" />-->
+         <div class="slds-spinner_container" style="position:absolute" >
+    <div class="slds-spinner--brand slds-spinner slds-spinner--small" role="alert">
+      <span class="slds-assistive-text">Loading, Please Wait...</span>
+      <div class="slds-spinner__dot-a"></div>
+      <div class="slds-spinner__dot-b"></div>
+    </div>
+  </div>
+      </aura:if>
+    <lightning:recordEditForm aura:id="leadForm"
+                             onsubmit = "{!c.handleSubmit}"
+                             onload =  "{!c.handleOnLoad}"
+                             onsuccess = "{!c.handleSuccess}" 
+                             onerror ="{!c.handleError}" 
+                             objectApiName="Lead">
+
+        <lightning:messages />
+
+        <div class="slds-grid slds-gutters">
+
+            <aura:if isTrue="{!$Browser.formFactor!='PHONE'}">
+			<div class="slds-col slds-size_1-of-2">
+              <!--   <lightning:input aura:id="field" name="Title" label="Title" value="{!v.title}"/> -->
+                <lightning:input aura:id="field" name="Title" label="{!$Label.c.Comd_BATPF_Title}" value="{!v.title}"/> 
+                <lightning:input aura:id="field" name="FirstName" label="{!$Label.c.Comd_BATPF_FName}"  value="{!v.firstName}" required="true"/>
+                <lightning:input aura:id="field" name="LastName" label="{!$Label.c.Comd_BATPF_LName}"  value="{!v.lastName}" required="true"/>
+                <lightning:input aura:id="field" name="Email" label="{!$Label.c.Comd_BATPF_Email}" type="email" value="{!v.email}" required="true"/>
+                <lightning:input aura:id="field" name="Phone"  type="tel" label="{!$Label.c.Comd_BATPF_Phone}" value="{!v.phone}" required="true"/>
+                <lightning:input aura:id="field" name="Company" type="text" label="{!$Label.c.Comd_BATPF_DNS_Company}" value="{!v.company}" required="true"/>
+                
+            </div>
+            <div class="slds-col slds-size_1-of-2">
+                <lightning:input aura:id="field" name="City" label="{!$Label.c.Comd_BATPF_City}"  value="{!v.city}" required="true"/>
+                <lightning:input aura:id="field" name="State" label="{!$Label.c.Comd_BATPF_State}" value="{!v.state}" required="true"/>
+                <lightning:input aura:id="field" name="ZipCode" label="{!$Label.c.Comd_BATPF_ZipCode}" value="{!v.zipCode}"/>
+                <lightning:input aura:id="field" name="Country" label="{!$Label.c.Comd_BATPF_Country}" value="{!v.country}" required="true"/>
+            </div>	
+            </aura:if> 
+            	<aura:if isTrue="{!$Browser.formFactor=='PHONE'}">
+			<div class="slds-col">
+                <!--<lightning:input aura:id="field" name="Title" label="Title" value="{!v.title}"/> -->
+                  <lightning:input aura:id="field" name="Title" label="{!$Label.c.Comd_BATPF_Title}" value="{!v.title}"/> 
+                <lightning:input aura:id="field" name="FirstName" label="{!$Label.c.Comd_BATPF_FName}"  value="{!v.firstName}" required="true"/>
+                <lightning:input aura:id="field" name="LastName" label="{!$Label.c.Comd_BATPF_LName}"  value="{!v.lastName}" required="true"/>
+                <lightning:input aura:id="field" name="Email" label="{!$Label.c.Comd_BATPF_Email}" type="email" value="{!v.email}" required="true"/>
+                <lightning:input aura:id="field" name="Phone"  type="tel" label="{!$Label.c.Comd_BATPF_Phone}" value="{!v.phone}" required="true"/>
+                <lightning:input aura:id="field" name="Company" type="text" label="{!$Label.c.Comd_BATPF_DNS_Company}" value="{!v.company}" required="true"/>
+                <lightning:input aura:id="field" name="City" label="{!$Label.c.Comd_BATPF_City}"  value="{!v.city}" required="true"/>
+                <lightning:input aura:id="field" name="State" label="{!$Label.c.Comd_BATPF_State}" value="{!v.state}" required="true"/>
+                <lightning:input aura:id="field" name="ZipCode" label="{!$Label.c.Comd_BATPF_ZipCode}" value="{!v.zipCode}"/>
+                <lightning:input aura:id="field" name="Country" label="{!$Label.c.Comd_BATPF_Country}" value="{!v.country}" required="true"/>
+     
+                </div>
+            </aura:if>
+        </div>
+        
+        
+    
+        <br/>
+       
+         
+        <div class="slds-p-top_x-large"><p>{!$Label.c.Comd_For_More_Info} <span class="list-item-link"><a target="_new" href="https://www.twilio.com/legal/privacy" title="www.twilio.com/legal/privacy">Twilio Privacy</a></span></p></div>
+        <div class="wrapper">
+            <lightning:button aura:id="myButton" variant="brand" class="slds-m-top_small" onclick="{!c.handleSubmit}" label="Let's Talk"/>
+        </div>
+
+    </lightning:recordEditForm>
+</div>
+</aura:component>

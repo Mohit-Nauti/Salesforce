@@ -1,0 +1,50 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,force:hasRecordId,flexipage:availableForRecordHome" access="global">
+    <aura:attribute name="overlayPanel" type="Aura.Component[]"/>
+    <aura:attribute name="leadPanel" type="Aura.Component[]"/>
+    <aura:handler name="closeModal" event="c:evt_CloseModal" action="{!c.handleCloseModalEvent}"/>
+    <aura:handler name="closeLeadModal" event="c:evt_CloseModal" action="{!c.handleCloseLeadModalEvent}"/>
+
+    <div class="slds">
+        <div class="become">
+            <h1 style="color:black;" class="twilio-h1 slds-text-align_center">{!$Label.c.BECOME_A_PARTNER}</h1>
+            <div class="centered slds-m-top_large">
+                <div class="slds-text-align_center descprition-text whitney-light lighter">
+                    {!$Label.c.BECOME_A_PARTNER_CONTENT}
+                </div>
+            </div>
+        </div>
+
+        <div class="what-type">
+             <h1 class="twilio-h1 uppercase slds-text-align_center knockout">{!$Label.c.PARTNER_TYPE_QUESTION}</h1>
+            <div class="centered slds-m-top_large">
+                <div class="slds-text-align_center descprition-text whitney-light lighter">
+                   {!$Label.c.PARTNER_TYPE_QUESTION_CONTENT}
+                </div>
+            </div>
+        </div>
+
+        <div class="partners">
+            <div class="partner">
+                <img src="{!$Resource.partnerhome + '/images/Build-Logos_tech-builder-logov2.svg'}" />
+              
+                <div class="partner-title"> {!$Label.c.Comd_BATwilioPartner_Tech_Partners}</div>
+                <div class="partner-text">
+                    {!$Label.c.TECHNOLOGY_PARTNER_CONTENT}
+                </div>
+                <button style="font-size:1rem;" class="slds-button slds-button_brand whitney-light lighter" onclick="{!c.techPartnerClick}">Become A Technology Partner</button>
+            </div>
+            <div class="partner">
+                <img src="{!$Resource.partnerhome + '/images/Build-Logos_consult-builder-logov2.svg'}" />
+                <div class="partner-title">{!$Label.c.Comd_BATP_Consulting_Partners}</div>
+                <div class="partner-text">
+                   {!$Label.c.CONSULTING_PARTNER_CONTENT}
+                </div>
+                <button style="font-size:1rem;" class="slds-button slds-button_brand whitney-light lighter" onclick="{!c.consultPartnerClick}">Become A Consulting Partner</button>
+            </div>
+        </div>
+
+        <lightning:overlayLibrary aura:id="overlayLib"/>
+        <lightning:overlayLibrary aura:id="confirmationModal" />
+
+    </div>
+</aura:component>
