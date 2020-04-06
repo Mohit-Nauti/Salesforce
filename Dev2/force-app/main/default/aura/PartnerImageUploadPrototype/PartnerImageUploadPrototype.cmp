@@ -1,0 +1,17 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes">
+    <aura:attribute name="recordId" type="String" description="Record to which the files should be attached" />
+    <aura:attribute name="FileList" type="Object" />
+    <aura:attribute name="DataUrl" type="String" />
+    <aura:attribute name="ImageData" type="String" />
+    <aura:attribute name="ImageHeight" type="Integer" />
+    <aura:attribute name="ImageWidth" type="Integer" />
+    <aura:attribute name="MaxHeight" type="Integer" />
+    <aura:attribute name="MaxWidth" type="Integer" />
+    <div aura:id="previewDiv" class="hidden">
+        <img id="previewImage" aura:id="preview" src="{!v.DataUrl}" onload="{!c.imageLoaded}" />
+    </div>
+
+    <div>Image must be exactly: {!v.MaxHeight} x {!v.MaxWidth}</div>
+    <lightning:input type="file" files="{!v.FileList}" aura:id="fileSelector" accept=".jpg,.jpeg,.png,.gif" label="Upload image" onchange="{!c.imageChanged}" />
+
+</aura:component>

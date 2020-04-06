@@ -1,0 +1,198 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,force:hasRecordId,flexipage:availableForRecordHome" access="global">
+    
+    <aura:attribute name="listingDetail" type="PartnerListingModel"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}"/>
+    
+    <aura:attribute name="overlayPanel" type="Aura.Component[]"/>
+    
+    <c:PartnerListingDetailDataService aura:id="listingDataservice"/>
+    
+    <div class="slds">
+        <!-- The banner -->
+        <aura:if isTrue="{!!empty(v.listingDetail.bannerURL)}">
+            <!-- The banner -->
+            <div >
+                <img src="{!v.listingDetail.bannerURL}"  class="responsive" />
+            </div>
+            <aura:set attribute="else">
+               
+                     <div class="slds-tile slds-media slds-p-around_small slds-media_center flex-rectangle" >
+                                <div class="slds-media__figure">
+                                    <span class="slds-avatar logoImg">
+                                        <aura:if isTrue="{!v.listingDetail.companyLogoURL != null}">
+                                            <img src="{!v.listingDetail.companyLogoURL}"  />
+                                        </aura:if>
+                                    </span>
+                                </div>
+                                <div class="slds-media__body">
+                                   
+                                            <div class="slds-grid slds-grid_align-spread slds-has-flexi-truncate">
+                                                <div class="title slds-text-heading_small slds-m-bottom_x-small block-with-text" title="{!v.listingDetail.partnerListing.Name}">{!v.listingDetail.partnerListing.Name}</div>
+                                             </div>
+                                             <div class="description block-with-text" style="font-size:32px"> {!v.listingDetail.partnerListing.Tagline__c}</div>
+                                       
+                                   
+                                </div>
+                           
+                    <!--  end-->
+                    
+                </div>
+            </aura:set>
+        </aura:if>
+        <!--
+		Description: In this we check the Patner_Tier__c according to that we
+					fetch the static resource. So the different svg file on
+					different values of partner_tier__c.
+		 -->
+        <aura:if isTrue="{!v.listingDetail.partnerListing.Partner_Tier__c=='Gold' }">
+            <div><img src="{!$Resource.Partner_Account_Level+'/images/gold-partner-bar-2.svg'}"/></div>
+        </aura:if>
+        <aura:if isTrue="{!v.listingDetail.partnerListing.Partner_Tier__c=='Silver' }">
+            <div><img src="{!$Resource.Partner_Account_Level+'/images/silver-partner-bar-2.svg'}"/></div>
+        </aura:if> 
+        <aura:if isTrue="{!v.listingDetail.partnerListing.Partner_Tier__c=='Bronze' }">
+            <div><img src="{!$Resource.Partner_Account_Level+'/images/bronze-partner-bar-2.svg'}"/></div>
+        </aura:if>
+        
+        <div id="content-section">
+            <div id="app-details">
+                <div class="slds-grid slds-wrap slds-gutters_medium">
+                    <!-- The carousel section -->
+                    <aura:if isTrue="{! v.listingDetail.carouselImages.length > 0 }">
+                        <div class="slds-col slds-grow-none">
+                            <div class="carousel">
+                                <lightning:carousel disableAutoScroll="true" disableAutoRefresh="true">
+                                    <aura:iteration  items="{!v.listingDetail.carouselImages}" var="carouselImage">
+                                        <lightning:carouselImage
+                                                                 src = "{!carouselImage.imageURL}"
+                                                                 description = "{!carouselImage.caption}"
+                                                                 alternativeText = "{!carouselImage.imageTitle}">
+                                        </lightning:carouselImage>
+                                    </aura:iteration>
+                                </lightning:carousel>
+                            </div>
+                        </div>
+                    </aura:if>
+                    <div class="slds-col">
+                        <!-- The main info section to the right of the carousel -->
+                        <div class="overview whitney-light">
+                            <p class="slds-text-title_caps">
+                                 
+                                <div class="slds-grid slds-grid_align-spread slds-has-flexi-truncate">
+                                <div>Consulting</div>
+                                <aura:if isTrue="{!v.listingDetail.partnerListing.Flex_Ready__c}"><img style="height: 30px;" src="{!$Resource.flexbadge}" /></aura:if>
+                                </div>
+                            </p>
+                            <!-- Listing company name -->
+                            <p id="company-name" class="slds-text-heading_large whitney-book slds-m-top_x-small">
+                                {!v.listingDetail.partnerListing.Name}
+                            </p>
+                            <!-- Description -->
+                            <p id="company-description" class="slds-text-body_regular slds-m-top_small">
+                                <lightning:formattedRichText value="{!v.listingDetail.partnerListing.Listing_Description__c}"></lightning:formattedRichText>
+                            </p>
+                            <!-- Certifications -->
+                            <aura:if isTrue="{!!empty(v.listingDetail.partnerListing.Partner_Profile__r.Certifications__c)}">
+                                <p id="certifications" class="slds-text-body_regular small-heading uppercase slds-m-top_small">
+                                    Certifications
+                                </p>
+                                <p>
+                                    {!v.listingDetail.partnerListing.Partner_Profile__r.Certifications__c}
+                                </p>
+                            </aura:if>
+                            <!-- Number of Employees -->
+                            <p id="number-employees" class="slds-text-body_regular small-heading uppercase slds-m-top_small">
+                                Number of Employees
+                            </p>
+                            <p>
+                                {!v.listingDetail.partnerListing.Number_of_Employees__c}
+                            </p>
+                            <!-- Partner Tier -->
+                            <aura:if isTrue="{!v.listingDetail.partnerListing.Partner_Tier__c == 'Gold'}">
+                            <p id="partner-tier" class="slds-text-body_regular small-heading uppercase slds-m-top_small">
+                                Partner Tier
+                            </p>
+                            <p>
+                                {!v.listingDetail.partnerListing.Partner_Tier__c}
+                            </p>
+                            </aura:if>
+                            <!-- Georgraphies Served -->
+                            <p id="geography-served" class="slds-text-body_regular small-heading uppercase slds-m-top_small">
+                                Geography Served
+                            </p>
+                            <p>
+                                {!v.listingDetail.partnerListing.Partner_Profile__r.Geographies_Served__c}
+                            </p>
+                            <div class="slds-m-top_large">
+                                <lightning:overlayLibrary aura:id="overlayLib"/>
+                                <button class="contact-button slds-text-heading_small" onclick="{! c.handleShowModal }">
+                                    <div class="slds-truncate">Contact Partner</div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Three column highlight section under the carousel -->
+            <div id="highlight-section"  class="slds-grid slds-wrap slds-gutters_medium">
+                <div class="highlight slds-col slds-size_1-of-1 slds-small-size_1-of-1 slds-medium-size_4-of-12 slds-large-size_4-of-12">
+               
+                    <p class="slds-text-heading_medium slds-m-bottom_small">
+                        {!v.listingDetail.partnerListing.Highlight_Title_1__c}
+                    </p>
+                    <p class="">
+                        {!v.listingDetail.partnerListing.Highlight_Text_1__c}
+                    </p>
+                </div>
+                <div class="highlight slds-col slds-size_1-of-1 slds-small-size_1-of-1 slds-medium-size_4-of-12 slds-large-size_4-of-12">
+               
+                    <p class="slds-text-heading_medium slds-m-bottom_small">
+                        {!v.listingDetail.partnerListing.Highlight_Title_2__c}
+                    </p>
+                    <p class="">
+                        {!v.listingDetail.partnerListing.Highlight_Text_2__c}
+                    </p>
+                </div>
+                <div class="highlight slds-col slds-size_1-of-1 slds-small-size_1-of-1 slds-medium-size_4-of-12 slds-large-size_4-of-12">
+               
+                    <p class="slds-text-heading_medium slds-m-bottom_small">
+                        {!v.listingDetail.partnerListing.Highlight_Title_3__c}
+                    </p>
+                    <p class="">
+                        {!v.listingDetail.partnerListing.Highlight_Text_3__c}
+                    </p>
+                </div>
+            </div>
+            <hr></hr>
+            
+            <!-- Little detail section with the small image and url -->
+             <div  id="listing-detail-section" class="slds-grid slds-wrap slds-grid_align-spread">
+                
+                <div class="slds-media">
+                    <div class="slds-media__figure company-logo">
+                        <img src="{!v.listingDetail.companyLogoURL}" />
+                    </div>
+                    <div class="slds-media__body" style="max-width:460px;">
+                        
+                        <p class="slds-text-heading_medium slds-m-bottom_small">
+                            {!v.listingDetail.partnerListing.Partner_Profile__r.Name}
+                        </p>
+                        <p class="slds-text-body_regular whitney-light">
+                            {!v.listingDetail.partnerListing.Partner_Profile__r.Description__c}
+                        </p>
+                        
+                    </div>
+                </div>
+                
+                <div class="slds-col">
+                    <div style="margin-top:36px;">
+                        <a onclick="{!c.navigate}">
+                            {!v.listingDetail.partnerListing.Partner_Profile__r.Website__c}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</aura:component>

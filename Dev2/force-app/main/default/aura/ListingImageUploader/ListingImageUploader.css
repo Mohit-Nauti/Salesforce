@@ -1,0 +1,50 @@
+.THIS {
+    text-align: center;
+}
+
+.THIS>p {
+    font-size: 14px;
+    color: #CCCCCC;
+    margin: 4px 0;
+}
+
+.THIS img {
+    width: auto;
+    height: auto;
+    border-radius: 4px;
+}
+
+.THIS #input-1-form-label {
+    display: none;
+}
+
+.THIS .slds-file-selector__dropzone {
+    height: 150px;
+    width: 300px;
+    padding: 2.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.THIS #input-1-file-body-label {
+    display: block;
+    margin: auto;
+}
+
+.THIS .slds-file-selector__button {
+    color: #000;
+    margin-bottom: 5px;
+    padding-left: 7px;
+    padding-right: 7px;
+}
+
+.THIS .preview-image {
+    /* max-width: 150px;
+    max-height: 150px; */
+}
+
+.THIS .slds-slds-file-selector__dropzone-selector {
+    width: 800px;
+    height: 300px;
+    padding: 2rem;
+}

@@ -1,0 +1,14 @@
+.THIS .eventItem {
+    padding: 1em 0em 1em 0em;
+    border-bottom: 1px solid;
+}
+
+.THIS .main {
+    margin-top: 1rem;
+}
+
+.THIS .slds-dropdown {
+    position: relative;
+    box-shadow: initial;
+    width: min-content;
+}

@@ -1,0 +1,5 @@
+<aura:component Controller = "NewOpportunityOnTaskController" implements="force:lightningQuickAction,force:hasRecordId" access="global" >
+	
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+</aura:component>

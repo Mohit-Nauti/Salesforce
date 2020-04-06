@@ -1,0 +1,239 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,force:hasRecordId,flexipage:availableForRecordHome" access="global">
+    
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}"/>
+    
+    <aura:attribute name="listingDetail" type="PartnerListingModel"/>
+    
+    <c:PartnerListingDetailDataService aura:id="listingDataservice"/>
+    
+    <div class="slds">
+        
+        <!-- The banner -->
+        
+        
+        <aura:if isTrue="{!!empty(v.listingDetail.bannerURL)}">
+            <!-- The banner -->
+            <div >
+                <img src="{!v.listingDetail.bannerURL}"  class="responsive" />
+            </div>
+            <aura:set attribute="else">
+               
+                     <div class="slds-tile slds-media slds-p-around_small slds-media_center flex-rectangle" >
+                                <div class="slds-media__figure">
+                                    <span class="slds-avatar logoImg">
+                                        <aura:if isTrue="{!v.listingDetail.companyLogoURL != null}">
+                                            <img src="{!v.listingDetail.companyLogoURL}"  />
+                                        </aura:if>
+                                    </span>
+                                </div>
+                                <div class="slds-media__body">
+                                   
+                                            <div class="slds-grid slds-grid_align-spread slds-has-flexi-truncate">
+                                                <div class="title slds-text-heading_small slds-m-bottom_x-small block-with-text" title="{!v.listingDetail.partnerListing.Name}">{!v.listingDetail.partnerListing.Name}</div>
+                                             </div>
+                                             <div class="description block-with-text" style="font-size:32px"> {!v.listingDetail.partnerListing.Tagline__c}</div>
+                                       
+                                   
+                                </div>
+                           
+                    <!--  end-->
+                    
+                </div>
+            </aura:set>
+        </aura:if>
+         <!--
+		Description: In this we check the Patner_Tier__c according to that we
+					fetch the static resource. So the different svg file on
+					different values of partner_tier__c.
+		 -->
+		<aura:if isTrue="{!v.listingDetail.partnerListing.Partner_Tier__c=='Gold' }">
+            <div><img src="{!$Resource.Partner_Account_Level+'/images/gold-partner-bar-2.svg'}"/></div>
+        </aura:if>
+        <aura:if isTrue="{!v.listingDetail.partnerListing.Partner_Tier__c=='Silver' }">
+            <div><img src="{!$Resource.Partner_Account_Level+'/images/silver-partner-bar-2.svg'}"/></div>
+        </aura:if> 
+        <aura:if isTrue="{!v.listingDetail.partnerListing.Partner_Tier__c=='Bronze' }">
+            <div><img src="{!$Resource.Partner_Account_Level+'/images/bronze-partner-bar-2.svg'}"/></div>
+        </aura:if>
+        <!-- Carousel and company details -->
+        <div id="content-section">
+            <div id="app-details">
+                <div class="slds-grid slds-wrap slds-gutters_medium">
+                    <!-- The carousel section -->
+                    <aura:if isTrue="{! v.listingDetail.carouselImages.length > 0 }">
+                        <div class="slds-col slds-grow-none">
+                            
+                            <div class="carousel">
+                                <lightning:carousel disableAutoScroll="true" disableAutoRefresh="true">
+                                    <aura:iteration  items="{!v.listingDetail.carouselImages}" var="carouselImage">
+                                        <lightning:carouselImage
+                                                                 src = "{!carouselImage.imageURL}"
+                                                                 description = "{!carouselImage.caption}"
+                                                                 alternativeText = "{!carouselImage.imageTitle}">
+                                        </lightning:carouselImage>
+                                    </aura:iteration>
+                                </lightning:carousel>
+                            </div>
+                        </div>
+                    </aura:if>
+                    <div class="slds-col">
+                        
+                        <!-- The main info section to the right of the carousel -->
+                        <div class="overview whitney-light">
+                            <p class="slds-text-title_caps">
+                                
+                                <div class="slds-grid slds-grid_align-spread slds-has-flexi-truncate">
+                                <div>Add-on</div>
+                                <aura:if isTrue="{!v.listingDetail.partnerListing.Flex_Ready__c}"><img style="height: 30px;" src="{!$Resource.marketplace + '/images/flexbadge.svg'}" /></aura:if>
+                                </div>
+                            </p>
+                            <!-- Name -->
+                            <p id="company-name" class="slds-text-heading_large whitney-book slds-m-top_x-small">
+                                {!v.listingDetail.partnerListing.Name}
+                            </p>
+                            <!-- Description -->
+                            <p id="company-description" class="slds-text-body_regular whitney-book slds-m-top_small">
+                                <lightning:formattedRichText value="{!v.listingDetail.partnerListing.Listing_Description__c}"></lightning:formattedRichText>
+                            </p>
+                            <!-- Categories -->
+                            <p id="categories" class="slds-text-body_regular small-heading uppercase slds-m-top_small">
+                                Categories
+                            </p>
+                            <p>
+                                {!v.listingDetail.partnerListing.Category__c}
+                            </p>
+                            <!-- Support description -->
+                            <p id="company-categories" class="slds-text-body_regular small-heading uppercase slds-m-top_small">
+                                Support description
+                            </p>
+                            <p>
+                                {!v.listingDetail.partnerListing.Support_Information__c}
+                            </p>
+                            <!-- Support email -->
+                            <p id="company-categories" class="slds-text-body_regular small-heading uppercase slds-m-top_small">
+                                Support email
+                            </p>
+                            <p>
+                                {!v.listingDetail.partnerListing.Support_Email__c}
+                            </p>
+                            <!-- Support phone -->
+                            <p id="company-categories" class="slds-text-body_regular small-heading uppercase slds-m-top_small">
+                                Support phone
+                            </p>
+                            <p>
+                                {!v.listingDetail.partnerListing.Support_Phone__c}
+                            </p>
+                            <!-- Twilio technologies -->
+                            <p id="company-categories" class="slds-text-body_regular small-heading uppercase slds-m-top_small">
+                                Twilio technologies
+                            </p>
+                            <p>
+                                {!v.listingDetail.partnerListing.Twilio_Technologies__c}
+                            </p>
+                            <!-- Price -->
+                            <p id="company-categories" class="slds-text-body_regular small-heading uppercase slds-m-top_small">
+                                Price
+                            </p>
+                            <p>
+                                {!v.listingDetail.partnerListing.Pricing__c}
+                            </p>
+                            <!-- Georgraphies Served -->
+                            <p id="geography-served" class="slds-text-body_regular small-heading uppercase slds-m-top_small">
+                                Geography Served
+                            </p>
+                            <p>
+                                {!v.listingDetail.partnerListing.Partner_Profile__r.Geographies_Served__c}
+                            </p>
+                            <div class="slds-m-top_large">
+                                <button class="contact-button slds-text-heading_small" onclick="{! c.installURL }">
+                                    <div class="slds-truncate">{!$Label.c.Comd_PartnerListingAddonDetail_Logintoinstall}</div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>            <!-- Three column highlight section under the carousel -->
+            <div id="highlight-section" class="slds-grid slds-wrap slds-gutters_medium">
+                <div class="highlight slds-col slds-size_1-of-1 slds-small-size_1-of-1 slds-medium-size_4-of-12 slds-large-size_4-of-12">
+                    
+                    
+                    <p class="slds-text-heading_medium slds-m-bottom_small">
+                        {!v.listingDetail.partnerListing.Highlight_Title_1__c}
+                    </p>
+                    <p class="slds-text-body_regular">
+                        {!v.listingDetail.partnerListing.Highlight_Text_1__c}
+                    </p>
+                </div>
+                <div class="highlight slds-col slds-size_1-of-1 slds-small-size_1-of-1 slds-medium-size_4-of-12 slds-large-size_4-of-12">
+                    
+                    <p class="slds-text-heading_medium slds-m-bottom_small">
+                        {!v.listingDetail.partnerListing.Highlight_Title_2__c}
+                    </p>
+                    <p class="slds-text-body_regular">
+                        {!v.listingDetail.partnerListing.Highlight_Text_2__c}
+                    </p>
+                </div>
+                <div class="highlight slds-col slds-size_1-of-1 slds-small-size_1-of-1 slds-medium-size_4-of-12 slds-large-size_4-of-12">
+                    
+                    <p class="slds-text-heading_medium slds-m-bottom_small">
+                        {!v.listingDetail.partnerListing.Highlight_Title_3__c}
+                    </p>
+                    <p class="slds-text-body_regular">
+                        {!v.listingDetail.partnerListing.Highlight_Text_3__c}
+                    </p>
+                </div>
+            </div>
+            <hr></hr>
+            
+            <!-- This section belongs in PartnerListingConsultantDetail -->
+            <div id="response-section">
+                <p style="margin-bottom:20px;" class="slds-text-heading_medium slds-m-bottom_small uppercase whitney-medium">Sample Annotation Responses</p>
+                <aura:iteration items="{!v.listingDetail.codeSnippets}" var="item">
+                    <p style="margin-top:50px;" class="whitney-medium">{! item.Display_Name__c }</p>
+                    <p class="">{! item.Description__c }</p>
+                    <div style="margin-top:10px;" class="code-snippet">
+                        <code>
+                            <lightning:formattedRichText value="{! item.Body__c }"></lightning:formattedRichText>
+                        </code>
+                        <!-- <code>{! item.Body__c }</code> -->
+                    </div>
+                </aura:iteration>
+            </div>
+            <hr></hr>
+            
+            <!-- Little detail section with the small image and url -->
+            <div  id="listing-detail-section" class="slds-grid slds-wrap slds-grid_align-spread">
+                
+                <div class="slds-media">
+                    <div class="slds-media__figure company-logo">
+                        <img src="{!v.listingDetail.companyLogoURL}" />
+                    </div>
+                    <div class="slds-media__body" style="max-width:460px;">
+                        
+                        <p class="slds-text-heading_medium slds-m-bottom_small">
+                            {!v.listingDetail.partnerListing.Partner_Profile__r.Name}
+                        </p>
+                        <p class="slds-text-body_regular whitney-light">
+                            {!v.listingDetail.partnerListing.Partner_Profile__r.Description__c}
+                        </p>
+                        
+                    </div>
+                </div>
+                
+                <div class="slds-col">
+                    <div style="margin-top:36px;">
+                        <a onclick="{!c.navigate}">
+                            {!v.listingDetail.partnerListing.Partner_Profile__r.Website__c}
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            
+            
+            
+        </div>
+    </div>
+    
+</aura:component>

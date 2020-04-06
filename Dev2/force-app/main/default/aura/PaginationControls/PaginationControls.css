@@ -1,0 +1,17 @@
+.THIS {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.THIS #pagination-controls a {
+    margin-right: 10px;
+}
+
+.THIS #pagination-controls a.active {
+    color:#f22f46;
+}
+
+
+.THIS #pagination-controls a:last-of-type {
+    margin-right:0;
+}

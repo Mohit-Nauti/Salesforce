@@ -1,0 +1,161 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,force:hasRecordId,flexipage:availableForRecordHome" access="global"> 
+    <!--<aura:component implements="forceCommunity:availableForAllPageTypes,force:hasRecordId,flexipage:availableForRecordHome,force:appHostable,flexipage:availableForAllPageTypes,fforce:lightningQuickAction" access="global">
+ <aura:attribute name="maxPage"  type="Integer" default="1" />   --> 
+ 
+    <div class="slds">
+  
+        <div class="top-focal">
+            <h1 style="color:black;" class="twilio-h1 slds-text-align_center">{!$Label.c.Comd_PLC_Welcome}</h1>
+            <div class="centered slds-m-top_large">
+                <div class="slds-text-align_center descprition-text whitney-light lighter">
+                    <aura:unescapedHtml value="{!$Label.c.Comd_Community_Welcome_Desc}" />
+                </div>
+            </div>
+        </div>
+		
+        <div class="where-to-start">
+                 <h1 class="twilio-h1 uppercase slds-text-align_center knockout">{!$Label.c.Comd_PLC_WhereToStart}</h1>
+        </div>
+   
+<aura:if isTrue ="{!$Browser.formFactor!='PHONE'}"> 
+       <!--    <div class="lifecycle-item-title" data-aura-rendered-by="45:2;a">Plan</div> -->
+         <div class="lifecycle">
+              <b>
+            <div class="lifecycle-item">
+              <a href="/s/plan" >
+                         
+                    <img   src=  "{!$Resource.lifecycle + '/images/Plan_hover.svg'}" class="Hover" />
+                    	 
+                    
+                    </a>
+                
+             
+               <div class="lifecycle-item-title slds-text-align_center">{!$Label.c.Comd_PLC_Plan}</div>
+                <div class="lifecycle-item-text slds-text-align_center">
+                    {!$Label.c.PLAN}
+                </div> 
+                  
+             </div>
+             </b>
+<b>
+            <div class="lifecycle-item">
+                <a href="/s/develop">
+                   <!-- <img src="{!$Resource.lifecycle + '/images/icon-dev.svg'}" /> --> 
+                     <img src="{!$Resource.lifecycle + '/images/Develop_Hover.svg'}" />
+                </a>
+                <div class="lifecycle-item-title"> {!$Label.c.Comd_PLC_Develop}</div>
+                <div class="lifecycle-item-text">
+                    {!$Label.c.DEVELOP}
+                </div>
+            </div>
+             </b>
+             <b>
+            <div class="lifecycle-item">
+                <a href="/s/go-to-market">
+                   <!-- <img src="{!$Resource.lifecycle + '/images/icon-logo.svg'}" /> -->
+                    <img src="{!$Resource.lifecycle + '/images/g2m_hover.svg'}" />
+                </a>
+                <div class="lifecycle-item-title">{!$Label.c.Comd_PLC_GotoMarket}</div>
+                <div class="lifecycle-item-text">
+                    {!$Label.c.GO_TO_MARKET}
+                </div>
+            </div>
+             </b>            
+             
+       <b>     <div class="lifecycle-item">
+                 <a href="/s/grow">
+                     <!--   <img src="{!$Resource.lifecycle + '/images/icon-grow.svg'}" /> -->
+                     <img src="{!$Resource.lifecycle + '/images/Grow_Hover.svg'}"  />
+                
+                </a>
+                <div class="lifecycle-item-title">{!$Label.c.Comd_PLC_Grow}</div>
+                <div class="lifecycle-item-text">
+                    {!$Label.c.GROW}
+                </div>
+                 </div>
+             </b>
+        </div>
+           </aura:if>
+        <aura:if isTrue="{!$Browser.formFactor=='PHONE'}">
+            <div class="listing-image">
+                                        <a href="/s/plan" >
+                                   <!--   <img src="{!$Resource.lifecycle + '/images/icon-plan.svg'}" /> -->
+                                   <!--   <img src="{!$Resource.lifecycle + '/images/Plan_Hover_Icon.svg'}" />-->
+                                          <img src="{!$Resource.lifecycle + '/images/Plan_hover.svg'}" class ="Hover"  />
+                                                           
+                                    
+                                <!--   <div class="lifecycle-item-title" Style="t">Plan</div> -->
+                                             <div class= "lifecycle-item-title slds-text-align_center"  Style="t">{!$Label.c.Comd_PLC_Plan}</div>
+                           </a>  
+                </div>             
+                                    <div class="lifecycle-item-title-M slds-text-align_center"  >
+                                        {!$Label.c.PLAN}
+                                    </div> 
+                                           
+                                   
+                    
+                                   <a href="/s/develop">
+                                   <!-- <img src="{!$Resource.lifecycle + '/images/icon-dev.svg'}" /> --> 
+                                       <div class="listing-image">
+                                     <img src="{!$Resource.lifecycle + '/images/Develop_Hover.svg'}" />
+                                       </div>
+                                 <div class="lifecycle-item-title slds-text-align_center" style="t" >{!$Label.c.Comd_PLC_Develop}</div>
+                                        </a>
+                                 <div class="lifecycle-item-title-M slds-text-align_center" >
+                                    {!$Label.c.DEVELOP}
+            						</div>
+                             
+                                                         
+           			            <a href="/s/develop">
+                                   <!-- <img src="{!$Resource.lifecycle + '/images/icon-dev.svg'}" /> --> 
+                                       <div class="listing-image">
+                                     <img src="{!$Resource.lifecycle + '/images/g2m_hover.svg'}" />
+                                       </div>
+                                 <div class="lifecycle-item-title slds-text-align_center" style="t" >{!$Label.c.Comd_PLC_GotoMarket}</div>
+                                        </a>
+                                 <div class="lifecycle-item-title-M slds-text-align_center" >
+                                    {!$Label.c.GO_TO_MARKET}
+            						</div>
+            
+                 			                                 
+                                     
+           			            <a href="/s/develop">
+                                   <!-- <img src="{!$Resource.lifecycle + '/images/icon-dev.svg'}" /> --> 
+                                       <div class="listing-image">
+                                     <img src="{!$Resource.lifecycle + '/images/Grow_Hover.svg'}"  />
+                                    
+                                 <div class="lifecycle-item-title slds-text-align_center" style="t" >{!$Label.c.Comd_PLC_Grow}</div>
+                                       </div>     
+                                        </a>
+                                    <div class="lifecycle-item-title-M slds-text-align_center" >
+                                    {!$Label.c.GROW}
+            						</div>
+                           
+            			
+            
+            
+            			
+                                    <div class="listing-info slds-p-around_medium">
+                                        <!--<div class="title slds-text-heading_small slds-m-bottom_x-small" title="{!listing.partnerListing.Name}">{!listing.partnerListing.Name}</div>-->
+                                        <!--<div class="tagline slds-m-bottom_xx-small">{!listing.tagline}</div>-->
+                                        <div class="slds-media slds-media_center">
+                                            <div class="slds-grid slds-grid_align-spread slds-has-flexi-truncate">
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+        </aura:if>
+
+        <div class="centered">
+            <a href="/s/plan">
+                <button style="font-size:1rem;"
+                    class="slds-button slds-button_brand whitney-light lighter">
+                    Begin your journey
+                </button>
+            </a>
+        </div>
+
+    </div> 
+    
+  
+</aura:component>

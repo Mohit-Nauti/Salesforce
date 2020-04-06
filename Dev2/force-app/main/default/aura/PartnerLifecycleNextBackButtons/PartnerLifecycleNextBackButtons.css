@@ -1,0 +1,9 @@
+.THIS {
+    font-family: whitney-light !important;
+    margin-bottom: 1rem;
+}
+
+.THIS .spread {
+    display: flex;
+    justify-content: space-between;
+}

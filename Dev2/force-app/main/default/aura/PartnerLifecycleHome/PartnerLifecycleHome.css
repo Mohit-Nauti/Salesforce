@@ -1,0 +1,129 @@
+.THIS {
+    min-height: 400px;
+    color: #636985;
+    font-size: 1.5em;
+    background-color: #f8f8f8;
+    margin-left: -1.75rem;
+    margin-right: -1.75rem;
+    margin-bottom: -2.22rem;
+}
+
+.THIS .top-focal {
+    margin-bottom: 40px;
+    background-color: #fff;
+}
+
+.THIS .uppercase {
+    text-transform: uppercase;
+}
+
+.THIS .centered {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    padding: 0 20px 80px 20px;
+}
+
+.THIS .descprition-text {
+    max-width: 1000px;
+    line-height: 1.9rem;
+    font-size: 1.55rem;
+}
+
+.THIS .descprition-text span {
+    font-family: whitney-medium;
+}
+
+.THIS .knockout {
+    font-family: knockout !important;
+}
+
+.THIS .whitney-light {
+    font-family: whitney-light !important;
+    /* font-size: 1rem !important; */
+}
+
+.THIS .slds-button_brand {
+    background-color: #028CFF;
+    border: 1px solid #028CFF;
+}
+
+
+.THIS .twilio-h1 {
+    font-family: whitney-book;
+    font-size: 2rem !important;
+    color: red;
+}
+
+.THIS .lifecycle {
+    margin: 40px auto 60px auto;
+    display: flex;
+    justify-content: space-evenly;
+   width: 440px;
+    justify-content: center;
+    
+}
+
+
+
+@media screen and (max-width: 520px) {
+    .THIS .lifecycle {
+       
+       
+      }
+}
+
+
+.THIS .lifecycle-item {
+    padding: 20px; 
+    margin-top: 40px;
+     width: 300px;
+    text-align: center;
+}
+
+.THIS .lifecycle-item-title {
+    font-family: whitney-medium !important;
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    margin-top: 15px;
+}
+
+.THIS .listing-image {
+  padding: 0 2rem;
+    max-width: 350px;
+    margin: 0 auto;
+    margin-bottom: 0px;
+    margin-top: 0px;
+}
+
+.THIS .lifecycle-item-title-M {
+    font-family: whitney-medium !important;
+    font-weight: 600;
+    font-size: 1.0rem;
+   padding: 0 2rem;
+    max-width: 1550px;
+    margin: 0 auto;
+    margin-bottom: 0px;
+    margin-top: 0px;
+}
+
+.THIS .lifecycle-item-text {
+    font-size: .9rem;
+    height: 100px;
+    font-family: whitney-light !important;
+}
+
+
+ .THIS b:hover{
+   height: 100%;
+    background-color: White;
+
+} 
+
+.THIS .main-wrapper {
+    padding: 0 2rem;
+    max-width: 1550px;
+    margin: 0 auto;
+    
+}

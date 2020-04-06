@@ -1,0 +1,32 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,force:hasRecordId" access="global"
+                controller="PartnerListingAssetController">
+	
+     <aura:handler event="c:CarouselModalClose" action="{!c.handleCloseModalEvent}"/>
+    <!-- attributes -->
+     <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="data" type="Object"/>
+    <aura:attribute name="columns" type="List" />
+    <aura:attribute name="overlayPanel" type="Object" />
+     <aura:attribute name="recordTypeId" type="Id" />
+
+    <aura:attribute name="rawData" type="Object" access="PRIVATE" />
+    <aura:attribute name="activeFilter" type="string" default="all" access="PRIVATE" />
+
+   
+    <!-- handlers-->
+    <aura:handler name="init" value="{! this }" action="{! c.init }"/>
+
+    <!-- the container element determine the height of the datatable -->
+      <lightning:card variant="Narrow" title="Carousels" iconName="custom:custom62" >
+          <aura:set attribute="actions">
+            <lightning:button label="New" onclick="{!c.createCarouselModal}"/>
+        </aura:set>
+        <lightning:datatable
+            columns="{! v.columns }"
+            data="{! v.data }"
+            keyField="id"
+            onrowaction="{! c.handleRowAction }"
+            onheaderaction="{! c.handleHeaderAction }"/>
+    </lightning:card>
+<lightning:overlayLibrary aura:id="overlayLib"/>
+</aura:component>

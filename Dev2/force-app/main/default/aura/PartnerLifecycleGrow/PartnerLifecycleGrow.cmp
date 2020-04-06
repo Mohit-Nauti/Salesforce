@@ -1,0 +1,62 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global">
+<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="prefixPath" type="String"/>
+    <div class="slds">
+ <c:CommunityPrefix aura:id="cmPrefix"></c:CommunityPrefix>
+        <div class="breadcrumb">
+            <div id="plan" class="base-rect">
+                <a href='/s/plan'>
+                   
+               							<aura:if isTrue="{!$Browser.formFactor=='PHONE'}">
+                                             <img src="{!$Resource.marketplace + '/images/Responsive_Twilio_Cellphone_White_Plan.svg'}" class="bread-textMV slds-truncate" />
+                                        </aura:if> 
+                                        <aura:if isTrue="{!$Browser.formFactor!='PHONE'}">
+											<div style="color:#fff;" class="bread-text slds-truncate">{!$Label.c.Comd_PLCP_Plan}</div> 
+                                        </aura:if>
+						
+						
+                </a>
+                    </div>
+         
+            <div id="develop" class="base-rect">
+                <a href='/s/develop'>
+                    
+					
+					<aura:if isTrue="{!$Browser.formFactor=='PHONE'}">
+                                        <img src="{!$Resource.marketplace + '/images/Responsive_Twilio_Cellphone_White_Develop.svg'}" class="bread-textMV slds-truncate" />
+                                        </aura:if> 
+                                        <aura:if isTrue="{!$Browser.formFactor!='PHONE'}">
+											<div class="bread-text middle-bread slds-truncate">{!$Label.c.Comd_PLCP_Develop}</div> 
+                                        </aura:if>
+                </a>
+            </div>
+            <div id="market" class="base-rect">
+                <a href='/s/go-to-market'>
+                    
+					<aura:if isTrue="{!$Browser.formFactor=='PHONE'}">
+                                            	<img src="{!$Resource.marketplace + '/images/Responsive_Twilio_Cellphone_White_G2M.svg'}" class="bread-textMV slds-truncate" />	
+                                        </aura:if> 
+                                        <aura:if isTrue="{!$Browser.formFactor!='PHONE'}">
+											<div class="bread-text middle-bread slds-truncate">{!$Label.c.Comd_PLCP_GotoMarket}</div>
+                                        </aura:if>
+                </a>
+            </div>
+            <div id="grow" class="base-rect">
+                <a href='/s/grow'>
+                    
+										<aura:if isTrue="{!$Browser.formFactor=='PHONE'}">
+                                           <!--  <img src="{!$Resource.marketplace + '/images/grow.png'}" class="two" />
+										-->
+                                               <img src="{!$Resource.marketplace + '/images/Responsive_Twilio_Cellphone_White_Grow.svg'}" class="bread-textMV slds-truncate" /> 
+ 											</aura:if> 
+                                        <aura:if isTrue="{!$Browser.formFactor!='PHONE'}">
+											<div class="bread-text slds-truncate">{!$Label.c.Comd_PLCP_Grow}</div>
+                                        </aura:if>
+                </a>
+            </div>
+        </div>
+         
+        
+    </div>
+
+</aura:component>

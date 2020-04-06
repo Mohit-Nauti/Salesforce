@@ -1,0 +1,31 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global">
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <aura:attribute name="back" type="String" default="" description="The page back from current"/>
+    <aura:attribute name="next" type="String" default="" description="The page next from current"/>
+
+    <div class="slds">
+        <div class="spread">
+            <div>
+                <a href="{! '/s/' + v.back }">
+                    <button style="font-size:1rem;"
+                        class="slds-button slds-button_neutral">
+                        Back
+                    </button>
+                </a>
+            </div>
+
+            <aura:if isTrue="{! (v.next != '') }">
+                <div>
+                    <a href="{! '/s/' + v.next }">
+                        <button style="font-size:1rem;background-color:rgb(239, 50, 75);"
+                            class="slds-button slds-button_brand">
+                            Next
+                        </button>
+                    </a>
+                </div>
+            </aura:if>
+        </div>
+    </div>
+</aura:component>

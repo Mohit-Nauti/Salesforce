@@ -1,0 +1,4 @@
+<design:component>
+    <design:attribute name="MaxHeight" label="Height" default="128" />
+    <design:attribute name="MaxWidth" label="Width" default="128" />
+</design:component>

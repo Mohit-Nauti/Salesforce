@@ -1,0 +1,19 @@
+.THIS .ErrorHeader {
+    text-align:center;
+    color: #C23934;
+}
+
+.THIS .spanText{
+    Color : #6B6D70;
+   font-size: 12px;
+}
+
+.THIS .AstricColor{
+    color: #C23934;
+}
+
+.THIS.spinnerDiv{
+    position: absolute;
+    width: 80px;
+    height: 80px;
+}

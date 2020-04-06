@@ -1,0 +1,160 @@
+.THIS {
+    max-width: 1440px;
+    margin: 0 auto;
+}
+
+.THIS .breadcrumb {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 65px;
+   
+}
+
+.THIS .breadcrumb-M {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 120px;
+   
+}
+/*.THIS .base-rect {
+    background-color: #fff;
+    display: inline-block;
+    height: 105px;
+    margin-left: 1px;
+    position: relative;
+    width: 290px;
+    border-top: 1px solid #dddddd;
+    border-bottom: 1px solid #dddddd;
+}*/
+.THIS .base-rect {
+    background-color: #fff;
+    display: inline-block;
+    height: 70px;
+    margin-left: 1px;
+    position: relative;
+    width: 290px;
+    border-top: 1px solid #dddddd;
+    border-bottom: 1px solid #dddddd;
+}
+
+.THIS .base-rect-M {
+    background-color: #fff;
+    display: inline-block;
+    height: 80px;
+    margin-left: -1px;
+    position: relative;
+    width: 190px;
+    border-top: 1px solid #dddddd;
+    border-bottom: 1px solid #dddddd;
+}
+.THIS #plan {
+    background-color: rgb(239, 50, 75);
+}
+.THIS .bread-text {
+    position: absolute;
+    top: 53%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: knockout !important;
+    color: #5a5a5a;
+    font-size: 1.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.13rem;
+    width: 100%;
+    text-align: center;
+   
+}
+
+.THIS .bread-textM {
+    position: absolute;
+    top: 50%;
+    left: 54%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    
+}
+
+.THIS .bread-textMV {
+    position: absolute;
+    display: inline-block;
+    height: 69px;
+    margin-left: 4px;
+    position: relative;
+    width: 100px;
+ /* border-top: 1px solid #dddddd; 
+    border-bottom: 1px solid #FFFFFF;*/
+ top: 11%;
+    left: -1%;
+}
+
+.THIS .bread-textMD {
+    position: absolute;
+    display: inline-block;
+    height: 80px;
+    margin-left: 2px;
+    position: relative;
+    width: 100px;
+	top: -1%;
+    left:2%;
+}
+.THIS .bread-textGM {
+    position: absolute;
+    display: inline-block;
+    height: 40px;
+    margin-left: 2px;
+    position: relative;
+    width: 100px;
+	top: -1%;
+    left:2%;
+}
+
+
+
+
+
+
+
+.THIS .middle-bread {
+    left: 54%;
+}
+
+.THIS .base-rect:nth-child(1) {
+    border-left: 1px solid #dddddd;
+}
+
+.THIS .base-rect:last-child {
+    border-right: 1px solid #dddddd;
+}
+
+.THIS .base-rect:nth-child(-n + 3):before {
+    z-index: 9;
+    right: -43px;
+    border-bottom: 16px solid #fff;
+    border-left: 35px solid transparent;
+    border-right: 35px solid transparent;
+    content: "";
+    height: 0;
+    position: absolute;
+    top: 26px;
+    width: 0;
+    -webkit-transform: rotate(0.5turn);
+    -ms-transform: rotate(0.5turn);
+    transform: rotate(0.25turn);
+}
+
+.THIS .base-rect:nth-child(n + 2):after {
+    top: -1px;
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border-left: 16px solid #dddddd;
+    border-top: 35px solid transparent;
+    border-bottom: 35px solid transparent;
+}
+
+.THIS .base-rect:nth-child(1):before {
+    border-bottom: 16px solid rgb(239, 50, 75);
+}

@@ -1,0 +1,30 @@
+<aura:component>
+    
+    <!--Handlers-->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler name="change" value="{!v.maxPageNumber}" action="{!c.setPageNumberRange}" />
+    <!--Attributes-->
+    <aura:attribute name="currentPageNumber" type="Integer" required="true" />
+    <aura:attribute name="maxPageNumber" type="Integer" required="true" />
+    <aura:attribute name="pageNumbers" type="Integer[]" />
+
+    <div>
+        <div id="pagination-controls" class="slds-button-group" role="group">
+            <!--<a onclick="{!c.firstPage}">
+                First
+            </a>-->
+            <a onclick="{!c.prevPage}" class="">
+                Prev
+            </a>
+            <aura:iteration items="{!v.pageNumbers}" var="pageNumber">
+                <a onclick="{!c.setPageNumber}" data-pagenumber="{!pageNumber}" class="{!v.currentPageNumber == pageNumber ? 'active' : ''}">{!pageNumber}</a>
+            </aura:iteration>
+            <a onclick="{!c.nextPage}" class="">
+                Next
+            </a>
+            <!--<a onclick="{!c.lastPage}">
+                Last
+            </a>-->
+        </div>
+    </div>
+</aura:component>
