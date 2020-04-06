@@ -1,0 +1,20 @@
+<aura:component controller="CompanyProfileController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" access="global">
+
+    <aura:registerEvent name="CompanyProfileId" type="c:CompanyProfileId" />
+
+    <aura:attribute name="companyProfileFields" type="String[]" default="['Name','Email__c','Key_Search_Terms__c','TagLine__c','Certifications__c','Short_Description__c','Employee_Count__c']" />
+
+    <aura:attribute name="mode" type="String" default="view" />
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+	<aura:if isTrue="{!$Browser.formFactor=='PHONE'}">
+    	<lightning:recordForm recordId="{!v.recordId}" objectApiName="Company_Profile__c" layoutType="Full" columns="1" mode="{!v.mode}" />
+    </aura:if>
+    
+    <aura:if isTrue="{!$Browser.formFactor!='PHONE'}">
+    	<lightning:recordForm recordId="{!v.recordId}" objectApiName="Company_Profile__c" layoutType="Full" columns="2" mode="{!v.mode}" />
+    </aura:if>
+
+
+</aura:component>

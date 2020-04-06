@@ -1,0 +1,8 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" controller="CompanyProfileController">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="recordId" type="Id"/>
+    <aura:if isTrue="{!!empty(v.recordId)}">
+        <forceChatter:publisher context="RECORD" recordId ="{!v.recordId}" />
+        <forceChatter:feed type="Record" subjectId ="{!v.recordId}"/>
+    </aura:if>
+</aura:component>

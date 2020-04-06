@@ -1,0 +1,14 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" access="global" controller="CompanyProfileController">
+
+    <aura:attribute name="CompanyProfileRecordId" type="String" />
+    <aura:attribute name="AccountInfo" type="Object" />
+
+    <aura:handler event="c:CompanyProfileId" action="{!c.handleCompanyProfileId}" />
+    <div width="100%" aura:id="container" class="slds-hide slds-clearfix">
+        <div width="100%" style="background-color:#cccccc; padding:4px;color:black">
+{!$Label.c.Comd_Comp_Prof_Media}</div>
+        <div width="100%" class="slds-float_left ">
+                    <c:ListingImageUploader AcceptFileTypes=".jpg,.jpeg,.png" MaxHeight="120" MaxWidth="120" title= "{!$Label.c.Comd_CPI_Company_Logo}" />
+        </div>
+    </div>
+</aura:component>

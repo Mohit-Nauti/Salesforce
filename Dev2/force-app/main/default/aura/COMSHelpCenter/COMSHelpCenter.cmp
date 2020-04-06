@@ -1,0 +1,66 @@
+<aura:component implements="flexipage:availableForAllPageTypes,force:hasRecordId,force:hasSObjectName" Controller = "COMSHelpCenterController">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="selTypeofHelp" type="String"/>
+    <aura:attribute name="parentOptions" type="List"/>
+    <aura:attribute name="parentPicklist" type="Object"/>
+    <aura:attribute name="disabledPick" type="Boolean" default="true"/>
+   	<aura:attribute name="disabledNextBtton" type="Boolean" default="true"/>
+    <aura:attribute name="fieldLabel" type="String" access="public" description="Label of field" />
+    <aura:attribute name="selectedValue" type="String" access="public" description="Selected picklist value" />
+    <aura:attribute name="pickListOptions" type="object[]" access="public" description="List of picklist values" />
+    <aura:attribute name="sobjecttype" type="String" default="{!v.sObjectName}"/>
+   	<aura:attribute name="AccId" type="String"/>
+    <aura:attribute name="itemsToDisplay" type="COMSHelpCenterController.recWrapper" />
+    <lightning:card >
+        <div class="slds-container--center slds-container--small slds-m-top--small">
+            <div class="slds-form--stacked">
+                <div class="slds-box">
+                    <div class="slds-grid">
+                        <div class="slds-align_absolute-center">
+                            <p><b><big>COMS Help Center</big></b></p>
+                        </div><br/>
+                    </div>
+                
+                <div class="slds-box">
+                    <p><b>Need help with a customer?</b></p>
+                    <p>Create a case that will be routed to the right internal team:</p>
+                </div>    
+                <lightning:select name="parentPicklist" aura:id="parentPicklist" onchange="{!c.PickChange}">
+                    <option value="">Select the type of help</option>
+                    <aura:iteration items="{!v.parentOptions}" var="parPickVal">
+                        <option value="{!parPickVal}">{!parPickVal}</option>
+                    </aura:iteration>
+                </lightning:select>
+                <div class="slds-box">
+                    <p><b>How do I select which type of help I need?</b></p><br/>
+                     <aura:if isTrue="{!v.itemsToDispay != null}">
+                    	<p>{!v.itemsToDisplay.recDescription}</p>
+                     <aura:set attribute="else">
+                         <p>
+                             <b>Billing Team:</b> General questions, update billing info, collections assistance, recurring billing charges, credit memo inquiry, Adding SIDs to current commits or Multi-account invoicing.<br/>
+                             <b>CSM Support:</b> Looker reporting, customer training, internal training, finance, billing, legal, product, product ops, customer help, customer support team.<br/>
+                             <b>Legal Team:</b> Customer Terminations<br/>
+                             <b>Sales Contract Operations Team:</b> Order Form Customization and Non-Order Form Customization<br/>
+                             <br/>
+                             <i>Dont know what to select?</i> Click <a href="https://wiki.hq.twilio.com/pages/viewpage.action?pageId=150844053" target="_blank">here </a>for more information on the wiki!
+                         </p>
+                     </aura:set>
+                     </aura:if>
+                </div>
+                <br/>
+                <h4><b>Please provide more details:</b></h4>
+                <lightning:select name="pickListValues" aura:id="thetellusMorepicklist" label="{!v.fieldLabel}" disabled="{!v.disabledPick}" onchange="{!c.PickChangeDep}" value="{!v.selectedValue}">
+                    <aura:iteration var="option" items="{! v.pickListOptions }">
+                        <option value="{!option.value}">{!option.label}</option>
+                    </aura:iteration>
+                </lightning:select>
+                <br/>
+            
+            <div class="slds-float_right">
+                <lightning:button label="Next" variant="brand" disabled="{!v.disabledNextBtton}" onclick="{!c.createCase}"/>
+            </div><br/><br/>
+            </div>         
+        </div>
+        </div>
+    </lightning:card>
+</aura:component>

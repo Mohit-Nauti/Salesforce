@@ -1,0 +1,39 @@
+<aura:component controller="PartnerListingAssetController">
+    <aura:registerEvent name="carouselCloseModal" type="c:CarouselModalClose"/>
+    <aura:attribute name="FileList" type="Object" />
+    <aura:attribute name="imageData" type="String" />
+     <aura:attribute name="parentId" type="id" />
+    <aura:attribute name="showLoadingSpinner" type="boolean" default="false" />
+    <aura:attribute name="listingrecordId" type="String"  />
+    <aura:attribute name="recordTypeId" type="String"  />
+    <aura:attribute name="fileName" type="String" default="No File Selected.." />
+    
+	<lightning:recordEditForm recordTypeId="{!v.recordTypeId}"
+                              aura:id="carouselForm"
+                             onsubmit = "{!c.handleSubmit}"
+                             onload =  "{!c.handleOnLoad}"
+                             onsuccess = "{!c.handleSuccess}" 
+                             onerror ="{!c.handleError}" 
+                             objectApiName="Partner_Listing_Asset__c">
+         <lightning:messages />
+        <lightning:inputField fieldName="Caption__c" />
+        <lightning:inputField fieldName="Partner_Listing__c" value ="{!v.listingrecordId}"/>
+        <lightning:inputField fieldName="Display_Order__c" />
+        <lightning:input  files="{!v.FileList}" type="file"
+                         label="Attachment" 
+                         name="file"
+                         multiple="false" accept=".jpg,.jpeg,.png" 
+                         onchange="{! c.handleUpload}"
+                         required="true"/>
+       
+       <p><i>To display properly ensure the image size is 660 by 450 pixels and is of a JPG or PNG file format.</i></p>
+        <div class="wrapper">
+            <lightning:button variant="brand" class="slds-m-top_small"  label="Submit" type="submit"/>
+        </div>
+        <aura:if isTrue="{!v.showLoadingSpinner}">
+      <div class="slds-text-body_small slds-text-color_error">Uploading... 
+         <img src="/auraFW/resources/aura/images/spinner.gif" class="spinner-img" alt="Loading"/>'
+      </div>
+   </aura:if>
+    </lightning:recordEditForm>
+</aura:component>

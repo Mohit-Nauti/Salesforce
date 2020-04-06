@@ -1,0 +1,51 @@
+<aura:component Controller="EventCertificationRelatedListContr" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:handler name="init" value="{!this}" action="{!c.getInit}"/>
+    <aura:attribute type="List" name="WrapperList"/>
+ 
+    
+    <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+        <thead>
+            <tr class="slds-text-title_caps">
+                <th scope="col">
+                    <div class="slds-truncate" >Event Certification Name</div>
+                </th>
+                <th scope="col">
+                    <div class="slds-truncate" >Attendee Name</div>
+                </th>
+                <th scope="col">
+                    <div class="slds-truncate" >Attendee Company</div>
+                </th>
+                <th scope="col">
+                    <div class="slds-truncate" >Attendee Email Address</div>
+                </th>
+                <th scope="col">
+                    <div class="slds-truncate" >Certification Stage</div>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <aura:iteration items="{!v.WrapperList}" var="Wrap">
+                <tr>
+                    <td data-label="Attendee Name">
+                        <div class="slds-truncate" title="">
+                            <a data-procinst-id="{!Wrap.theEventCertID}" onclick="{!c.redirect}">{!Wrap.theEventCert}</a>
+                        </div>
+                    </td>
+                    <td data-label="Attendee Name">
+                        <div class="slds-truncate" title="">{!Wrap.theContactName}</div>
+                    </td>
+                    <td data-label="Attendee Company">
+                        <div class="slds-truncate" title="">{!Wrap.theAccntName}</div>
+                    </td>
+                    <td data-label="Attendee Email Address">
+                        <div class="slds-truncate" title="">{!Wrap.theContactEmail}</div>
+                    </td>
+                    <td data-label="Certification Stage">
+                        <div class="slds-truncate" title="">{!Wrap.thePartnerCertStage}</div>
+                    </td>
+                </tr>
+            </aura:iteration>
+        </tbody>
+    </table>
+    
+</aura:component>

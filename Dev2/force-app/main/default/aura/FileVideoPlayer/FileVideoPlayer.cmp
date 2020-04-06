@@ -1,0 +1,5 @@
+<aura:component implements="force:hasRecordId,lightning:actionOverride,force:lightningQuickAction,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global">
+    <video autoplay="true" width="1024" height="768">
+        <source src="https://build.twilio.com/sfc/servlet.shepherd/document/download/0691W00000C5DuwQAF" type="video/mp4" />
+    </video>
+</aura:component>

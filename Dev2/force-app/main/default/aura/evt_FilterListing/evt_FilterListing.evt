@@ -1,0 +1,5 @@
+<aura:event type="COMPONENT" description="Event template">
+	<aura:attribute name="filterName" type="String"/>
+	<aura:attribute name="filterGroup" type="String"/>
+    <aura:attribute name="filterGroupList" type="Object"/>
+</aura:event>
